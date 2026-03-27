@@ -63,7 +63,10 @@ def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
                     "Return one JSON object only. "
                     'Schema: {"summary": string, "risk_level": "高|中|低", '
                     '"keywords": string[], "important_points": string[]}. '
-                    "Use Simplified Chinese. Do not wrap JSON in markdown."
+                    "Use Simplified Chinese for all explanatory text. "
+                    "If the source article is in English, translate the key facts first and then summarize in Chinese. "
+                    "Keep vendor, product, malware, and standard names only when necessary. "
+                    "Do not wrap JSON in markdown."
                 ),
             },
             {
@@ -74,6 +77,7 @@ def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
     )
     message = response.choices[0].message.content or ""
     payload = _parse_json_payload(message)
+    payload = _ensure_chinese_payload(client, settings, payload)
 
     return ArticleSummary(
         source=article.source,
@@ -86,6 +90,7 @@ def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
         summary=_normalize_summary(payload.get("summary")),
         important_points=_normalize_points(payload.get("important_points")),
         used_fallback=False,
+        matched_focus_keywords=article.matched_focus_keywords,
     )
 
 
@@ -97,9 +102,11 @@ def _build_prompt(article: Article) -> str:
 要求：
 1. summary 为 3-5 句中文摘要，突出事件、影响和处置建议。
 2. risk_level 只能是 高 / 中 / 低。
-3. keywords 输出 3-5 个关键词。
-4. important_points 输出 2-4 条要点，每条一句话。
-5. 不要编造文章中没有出现的事实；信息不足时明确说明信息有限。
+3. 如果原文是英文，先理解并翻译关键信息，再输出中文摘要。
+4. keywords 输出 3-5 个关键词，尽量使用中文；厂商、产品、组织名称可以保留英文。
+5. important_points 输出 2-4 条要点，每条一句话，尽量使用中文。
+6. 如出现英文句子或英文要点，需要先转成简体中文再输出。
+7. 不要编造文章中没有出现的事实；信息不足时明确说明信息有限。
 
 文章元数据：
 标题: {article.title}
@@ -159,7 +166,10 @@ def _normalize_points(value: object) -> list[str]:
 def _build_fallback_summary(article: Article) -> ArticleSummary:
     text = article.content or article.summary_hint or article.title
     points = _extract_points(text)
-    summary = "；".join(points[:3]) or "未能从原文中提取足够内容，请检查源站是否可访问。"
+    summary = (
+        "未调用大模型，以下为原文关键信息摘录："
+        + ("；".join(points[:3]) or "未能从原文中提取足够内容，请检查源站是否可访问。")
+    )
 
     return ArticleSummary(
         source=article.source,
@@ -172,7 +182,60 @@ def _build_fallback_summary(article: Article) -> ArticleSummary:
         summary=summary,
         important_points=points[:3] or [article.title],
         used_fallback=True,
+        matched_focus_keywords=article.matched_focus_keywords,
     )
+
+
+def _ensure_chinese_payload(
+    client: OpenAI,
+    settings: Settings,
+    payload: dict,
+) -> dict:
+    if _payload_is_mostly_chinese(payload):
+        return payload
+
+    rewrite_response = client.chat.completions.create(
+        model=settings.llm_model,
+        temperature=0.1,
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You rewrite cybersecurity summaries into Simplified Chinese. "
+                    "Return one JSON object only and keep the same schema."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    "把下面 JSON 中所有说明性文本改写为简体中文。"
+                    "厂商、产品、组织、恶意软件名称可以保留英文。"
+                    "keywords 和 important_points 也要尽量中文化。\n\n"
+                    f"{json.dumps(payload, ensure_ascii=False)}"
+                ),
+            },
+        ],
+    )
+    rewrite_message = rewrite_response.choices[0].message.content or ""
+    rewritten_payload = _parse_json_payload(rewrite_message)
+    if _payload_is_mostly_chinese(rewritten_payload):
+        return rewritten_payload
+    return payload
+
+
+def _payload_is_mostly_chinese(payload: dict) -> bool:
+    parts = [
+        str(payload.get("summary") or ""),
+        *[str(item) for item in payload.get("important_points") or []],
+        *[str(item) for item in payload.get("keywords") or []],
+    ]
+    combined = " ".join(part for part in parts if part.strip())
+    if not combined:
+        return False
+
+    chinese_chars = len(re.findall(r"[\u4e00-\u9fff]", combined))
+    english_chars = len(re.findall(r"[A-Za-z]", combined))
+    return chinese_chars > 0 and chinese_chars >= max(12, english_chars // 2)
 
 
 def _extract_points(text: str) -> list[str]:
@@ -197,4 +260,3 @@ def _guess_keywords(article: Article) -> list[str]:
     if article.source not in keywords:
         keywords.append(article.source)
     return keywords[:5]
-

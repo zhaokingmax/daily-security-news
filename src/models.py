@@ -13,6 +13,7 @@ class Article:
     published_at: str
     summary_hint: str
     content: str
+    matched_focus_keywords: list[str]
 
 
 @dataclass(slots=True)
@@ -27,7 +28,7 @@ class ArticleSummary:
     summary: str
     important_points: list[str]
     used_fallback: bool
+    matched_focus_keywords: list[str]
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
-

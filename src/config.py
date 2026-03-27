@@ -1,12 +1,51 @@
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
+
+DEFAULT_FOCUS_KEYWORDS = [
+    "安全智能体",
+    "security agent",
+    "security agents",
+    "ai agent",
+    "ai agents",
+    "agentic",
+    "soc",
+    "security operations center",
+    "crowdstrike",
+    "微软",
+    "microsoft",
+    "cisco",
+    "paloalto",
+    "palo alto",
+    "palo alto networks",
+    "edr",
+    "endpoint detection and response",
+    "xdr",
+    "extended detection and response",
+    "威胁研判",
+    "threat assessment",
+    "threat analysis",
+    "威胁溯源",
+    "threat attribution",
+    "attribution",
+    "运营商",
+    "telecom",
+    "telecommunications",
+    "apt",
+]
+DEFAULT_BLACKLIST_KEYWORDS = [
+    "密码学",
+    "cryptography",
+    "cve",
+    "cve-",
+]
 
 
 def _read_bool(name: str, default: bool) -> bool:
@@ -34,6 +73,19 @@ def _resolve_path(base_dir: Path, env_name: str, default: Path) -> Path:
     return (base_dir / candidate).resolve()
 
 
+def _read_list(name: str, default: list[str]) -> list[str]:
+    raw_value = os.getenv(name)
+    if raw_value is None or not raw_value.strip():
+        return list(default)
+
+    items = [
+        item.strip()
+        for item in re.split(r"[,，\n\r\t]+", raw_value)
+        if item.strip()
+    ]
+    return items or list(default)
+
+
 @dataclass(slots=True)
 class Settings:
     llm_api_key: str | None
@@ -49,6 +101,8 @@ class Settings:
     output_dir: Path
     state_file: Path
     report_title: str
+    focus_keywords: list[str]
+    blacklist_keywords: list[str]
 
     @property
     def timezone(self) -> ZoneInfo:
@@ -90,4 +144,6 @@ def load_settings(base_dir: Path | None = None) -> Settings:
         output_dir=output_dir,
         state_file=state_file,
         report_title=os.getenv("REPORT_TITLE", "Daily Security News"),
+        focus_keywords=_read_list("FOCUS_KEYWORDS", DEFAULT_FOCUS_KEYWORDS),
+        blacklist_keywords=_read_list("BLACKLIST_KEYWORDS", DEFAULT_BLACKLIST_KEYWORDS),
     )

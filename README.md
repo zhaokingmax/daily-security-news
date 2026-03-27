@@ -4,8 +4,8 @@
 
 这个版本默认不做微信推送，产物直接写入：
 
-- `data/YYYY-MM-DD.json`
-- `data/YYYY-MM-DD.md`
+- `data/YYYY-MM/YYYY-MM-DD.json`
+- `data/YYYY-MM/YYYY-MM-DD.md`
 - `data/latest.json`
 - `data/latest.md`
 
@@ -85,8 +85,10 @@ Daily Security News
 2. 过滤已处理链接。
 3. 尝试抓取正文。
 4. 调用大模型生成中文摘要。
-5. 生成 JSON 和 Markdown 报告。
-6. 自动提交 `data/` 和 `state/` 回仓库。
+5. 英文内容优先翻译后生成中文摘要。
+6. 按关注关键词优先排序，并过滤黑名单内容。
+7. 生成 JSON 和 Markdown 报告。
+8. 自动提交 `data/` 和 `state/` 回仓库。
 
 ## 本地运行
 
@@ -111,13 +113,15 @@ python -m src.main
 - `MAX_ARTICLES_PER_RUN`，默认 `12`
 - `MAX_ARTICLES_PER_FEED`，默认 `4`
 - `ENABLE_CONTENT_FETCH`，默认 `true`
-- `ALLOW_FALLBACK_SUMMARY`，默认 `true`；没有配置模型或模型调用失败时会回退，但输出可能保留原文语言
+- `ALLOW_FALLBACK_SUMMARY`，默认 `true`；没有配置模型或模型调用失败时会回退
+- `FOCUS_KEYWORDS`，可选，逗号分隔；默认内置关注词，支持中英文匹配与优先排序
+- `BLACKLIST_KEYWORDS`，可选，逗号分隔；命中后自动忽略
 - `OUTPUT_DIR`，可选，自定义报告输出目录
 - `STATE_FILE`，可选，自定义去重状态文件路径
 
 ## 输出文件说明
 
-### `data/YYYY-MM-DD.json`
+### `data/YYYY-MM/YYYY-MM-DD.json`
 
 结构示例：
 
@@ -137,7 +141,8 @@ python -m src.main
       "keywords": ["勒索软件", "漏洞利用", "补丁"],
       "summary": "中文摘要",
       "important_points": ["要点 1", "要点 2"],
-      "used_fallback": false
+      "used_fallback": false,
+      "matched_focus_keywords": ["microsoft", "edr"]
     }
   ]
 }
@@ -149,13 +154,20 @@ python -m src.main
 
 ## 数据源
 
-默认内置了这几个 RSS：
+默认内置这些资讯源：
 
 - The Hacker News
 - Krebs on Security
 - BleepingComputer
 - SecurityWeek
 - Dark Reading
+- CSO Online
+- Infosecurity Magazine
+- CyberScoop
+- The CyberWire
+- 安全内参
+- 安全客
+- CNCERT
 
 你可以直接改这个文件：
 

@@ -15,9 +15,11 @@ def write_reports(
     summaries: list[ArticleSummary],
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
+    monthly_dir = output_dir / report_date[:7]
+    monthly_dir.mkdir(parents=True, exist_ok=True)
 
-    report_json_path = output_dir / f"{report_date}.json"
-    report_markdown_path = output_dir / f"{report_date}.md"
+    report_json_path = monthly_dir / f"{report_date}.json"
+    report_markdown_path = monthly_dir / f"{report_date}.md"
     latest_json_path = output_dir / "latest.json"
     latest_markdown_path = output_dir / "latest.md"
 
@@ -77,6 +79,7 @@ def _build_markdown_report(
                 f"- 发布时间: {item.get('published_at') or 'Unknown'}",
                 f"- 风险等级: {item['risk_level']}",
                 f"- 关键词: {', '.join(item.get('keywords') or []) or 'N/A'}",
+                f"- 命中关注词: {', '.join(item.get('matched_focus_keywords') or []) or '无'}",
                 f"- 原文链接: {item['link']}",
                 f"- 摘要来源: {'回退逻辑' if item.get('used_fallback') else '大模型'}",
                 "",
@@ -91,4 +94,3 @@ def _build_markdown_report(
         lines.append("")
 
     return "\n".join(lines).strip() + "\n"
-
