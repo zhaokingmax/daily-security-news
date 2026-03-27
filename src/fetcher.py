@@ -133,9 +133,12 @@ def fetch_new_articles(
             if article is None:
                 continue
 
-            article_text = _article_search_text(article)
-            if _find_matching_keywords(article_text, settings.blacklist_keywords):
-                print(f"Skipped blacklisted article: {article.title}")
+            article_blacklist_hits = _find_blacklist_hits(article.title, article.summary_hint, settings.blacklist_keywords)
+            if article_blacklist_hits:
+                print(
+                    f"Skipped blacklisted article: {article.title} | "
+                    f"matched: {', '.join(article_blacklist_hits)}"
+                )
                 continue
 
             if article.canonical_link in seen_urls or article.canonical_link in queued_urls:
@@ -173,7 +176,16 @@ def _load_source_candidates(
     for candidate in candidates:
         if candidate.canonical_link in seen_urls or candidate.canonical_link in queued_urls:
             continue
-        if _find_matching_keywords(_candidate_search_text(candidate), settings.blacklist_keywords):
+        candidate_blacklist_hits = _find_blacklist_hits(
+            candidate.title,
+            candidate.summary_hint,
+            settings.blacklist_keywords,
+        )
+        if candidate_blacklist_hits:
+            print(
+                f"Skipped blacklisted candidate: {candidate.title} | "
+                f"matched: {', '.join(candidate_blacklist_hits)}"
+            )
             continue
         filtered.append(candidate)
 
@@ -451,6 +463,18 @@ def _article_search_text(article: Article) -> str:
             article.content,
         ]
     )
+
+
+def _find_blacklist_hits(
+    title: str,
+    summary_hint: str,
+    blacklist_keywords: list[str],
+) -> list[str]:
+    # Blacklist should only suppress articles whose visible headline/summary
+    # clearly centers on the unwanted topic. Matching the full body caused
+    # too many false positives when articles mentioned CVEs in passing.
+    visible_text = "\n".join([title, summary_hint]).strip()
+    return _find_matching_keywords(visible_text, blacklist_keywords)
 
 
 def _merge_keywords(first: list[str], second: list[str]) -> list[str]:

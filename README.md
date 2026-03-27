@@ -119,7 +119,7 @@ python -m src.main
 - `ENABLE_CONTENT_FETCH`，默认 `true`
 - `ALLOW_FALLBACK_SUMMARY`，默认 `true`；没有配置模型或模型调用失败时会回退
 - `FOCUS_KEYWORDS`，可选，逗号分隔；默认内置关注词，支持中英文匹配与优先排序
-- `BLACKLIST_KEYWORDS`，可选，逗号分隔；命中后自动忽略
+- `BLACKLIST_KEYWORDS`，可选，逗号分隔；仅基于标题和摘要命中后自动忽略
 - `OUTPUT_DIR`，可选，自定义报告输出目录
 - `STATE_FILE`，可选，自定义去重状态文件路径
 
