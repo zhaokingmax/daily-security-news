@@ -1,0 +1,94 @@
+from __future__ import annotations
+
+import shutil
+from pathlib import Path
+
+from .models import ArticleSummary
+from .storage import read_json_file, write_json_file
+
+
+def write_reports(
+    report_date: str,
+    generated_at: str,
+    report_title: str,
+    output_dir: Path,
+    summaries: list[ArticleSummary],
+) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    report_json_path = output_dir / f"{report_date}.json"
+    report_markdown_path = output_dir / f"{report_date}.md"
+    latest_json_path = output_dir / "latest.json"
+    latest_markdown_path = output_dir / "latest.md"
+
+    existing_payload = read_json_file(report_json_path, default={})
+    existing_items = existing_payload.get("items", []) if isinstance(existing_payload, dict) else []
+    merged_items = _merge_items(existing_items, [summary.to_dict() for summary in summaries])
+
+    payload = {
+        "date": report_date,
+        "generated_at": generated_at,
+        "count": len(merged_items),
+        "items": merged_items,
+    }
+    write_json_file(report_json_path, payload)
+    report_markdown_path.write_text(
+        _build_markdown_report(report_title, report_date, generated_at, merged_items),
+        encoding="utf-8",
+    )
+
+    shutil.copyfile(report_json_path, latest_json_path)
+    shutil.copyfile(report_markdown_path, latest_markdown_path)
+
+
+def _merge_items(existing_items: list[dict], new_items: list[dict]) -> list[dict]:
+    merged: dict[str, dict] = {}
+    for item in existing_items + new_items:
+        canonical_link = item.get("canonical_link") or item.get("link")
+        if canonical_link:
+            merged[canonical_link] = item
+
+    return sorted(
+        merged.values(),
+        key=lambda item: (item.get("published_at", ""), item.get("title", "")),
+        reverse=True,
+    )
+
+
+def _build_markdown_report(
+    report_title: str,
+    report_date: str,
+    generated_at: str,
+    items: list[dict],
+) -> str:
+    lines = [
+        f"# {report_title} | {report_date}",
+        "",
+        f"- 生成时间: {generated_at}",
+        f"- 文章数量: {len(items)}",
+        "",
+    ]
+
+    for index, item in enumerate(items, start=1):
+        lines.extend(
+            [
+                f"## {index}. {item['title']}",
+                f"- 来源: {item['source']}",
+                f"- 发布时间: {item.get('published_at') or 'Unknown'}",
+                f"- 风险等级: {item['risk_level']}",
+                f"- 关键词: {', '.join(item.get('keywords') or []) or 'N/A'}",
+                f"- 原文链接: {item['link']}",
+                f"- 摘要来源: {'回退逻辑' if item.get('used_fallback') else '大模型'}",
+                "",
+                "### 摘要",
+                item["summary"],
+                "",
+                "### 要点",
+            ]
+        )
+        for point in item.get("important_points", []):
+            lines.append(f"- {point}")
+        lines.append("")
+
+    return "\n".join(lines).strip() + "\n"
+

@@ -1,0 +1,57 @@
+name: Daily Security News
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 0 * * *" # 08:15 Asia/Shanghai
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-security-news
+  cancel-in-progress: false
+
+jobs:
+  collect-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run collector
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL || 'https://api.openai.com/v1' }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL || 'gpt-4o-mini' }}
+          TZ_NAME: Asia/Shanghai
+          MAX_ARTICLES_PER_RUN: "12"
+          MAX_ARTICLES_PER_FEED: "4"
+          ENABLE_CONTENT_FETCH: "true"
+          ALLOW_FALLBACK_SUMMARY: "true"
+        run: python -m src.main
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data state
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update daily security news"
+          git push

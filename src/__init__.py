@@ -1,0 +1,2 @@
+"""Daily Security News package."""
+
