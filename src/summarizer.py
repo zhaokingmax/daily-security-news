@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from functools import lru_cache
+from itertools import islice
 
 from openai import OpenAI
 
+from .categorizer import categorize_summary
 from .config import Settings
 from .models import Article, ArticleSummary
 
@@ -30,11 +33,62 @@ MEDIUM_RISK_MARKERS = {
 }
 
 
+def summarize_articles(
+    articles: list[Article],
+    settings: Settings,
+) -> list[ArticleSummary]:
+    if not articles:
+        return []
+
+    if not settings.llm_enabled:
+        return [_build_fallback_summary(article) for article in articles]
+
+    summaries: list[ArticleSummary] = []
+    batch_size = max(1, settings.llm_batch_size)
+
+    for batch in _chunked(articles, batch_size):
+        summaries.extend(_summarize_batch_with_resilience(batch, settings))
+
+    return summaries
+
+
 def summarize_article(article: Article, settings: Settings) -> ArticleSummary:
+    summaries = summarize_articles([article], settings)
+    if not summaries:
+        raise RuntimeError(f"Failed to summarize article: {article.link}")
+    return summaries[0]
+
+
+def _summarize_batch_with_resilience(
+    articles: list[Article],
+    settings: Settings,
+) -> list[ArticleSummary]:
+    llm_results: dict[str, ArticleSummary] = {}
+
+    try:
+        llm_results = _summarize_batch_with_llm(articles, settings)
+    except Exception as exc:
+        print(f"Batch LLM summary failed for {len(articles)} articles | {exc}")
+
+    summaries: list[ArticleSummary] = []
+    for article in articles:
+        summary = llm_results.get(article.canonical_link)
+        if summary is None:
+            summary = _summarize_single_with_resilience(article, settings)
+        summaries.append(summary)
+
+    return summaries
+
+
+def _summarize_single_with_resilience(
+    article: Article,
+    settings: Settings,
+) -> ArticleSummary:
     if settings.llm_enabled:
         try:
             return _summarize_with_llm(article, settings)
         except Exception as exc:
+            print(f"Single article LLM summary failed: {article.link} | {exc}")
             if not settings.allow_fallback_summary:
                 raise RuntimeError(
                     f"LLM summary failed for {article.link}: {exc}"
@@ -50,12 +104,69 @@ def _get_client(api_key: str, base_url: str) -> OpenAI:
     return OpenAI(api_key=api_key, base_url=base_url)
 
 
+def _summarize_batch_with_llm(
+    articles: list[Article],
+    settings: Settings,
+) -> dict[str, ArticleSummary]:
+    client = _get_client(settings.llm_api_key or "", settings.llm_base_url)
+    article_lookup = {
+        str(index): article
+        for index, article in enumerate(articles, start=1)
+    }
+
+    response = _chat_complete(
+        client,
+        settings,
+        [
+            {
+                "role": "system",
+                "content": (
+                    "You are a cybersecurity analyst. "
+                    "Return one JSON object only. "
+                    'Schema: {"items": [{"id": string, "summary": string, '
+                    '"risk_level": "高|中|低", "keywords": string[], '
+                    '"important_points": string[]}]}. '
+                    "Use Simplified Chinese for all explanatory text. "
+                    "If the source article is in English, translate key facts first and then summarize in Chinese. "
+                    "Return exactly one item for each input article id. "
+                    "Do not wrap JSON in markdown."
+                ),
+            },
+            {
+                "role": "user",
+                "content": _build_batch_prompt(article_lookup, settings),
+            },
+        ],
+        temperature=0.2,
+    )
+    payload = _parse_json_payload(response.choices[0].message.content or "")
+    raw_items = payload.get("items")
+    if not isinstance(raw_items, list):
+        raise ValueError("Batch LLM payload missing items array.")
+
+    results: dict[str, ArticleSummary] = {}
+    for raw_item in raw_items:
+        if not isinstance(raw_item, dict):
+            continue
+
+        article_id = str(raw_item.get("id") or "").strip()
+        article = article_lookup.get(article_id)
+        if article is None:
+            continue
+
+        normalized_payload = _normalize_payload(raw_item)
+        normalized_payload = _ensure_chinese_payload(client, settings, normalized_payload)
+        results[article.canonical_link] = _build_article_summary(article, normalized_payload, used_fallback=False)
+
+    return results
+
+
 def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
     client = _get_client(settings.llm_api_key or "", settings.llm_base_url)
-    response = client.chat.completions.create(
-        model=settings.llm_model,
-        temperature=0.2,
-        messages=[
+    response = _chat_complete(
+        client,
+        settings,
+        [
             {
                 "role": "system",
                 "content": (
@@ -71,31 +182,48 @@ def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
             },
             {
                 "role": "user",
-                "content": _build_prompt(article),
+                "content": _build_single_prompt(article, settings),
             },
         ],
+        temperature=0.2,
     )
-    message = response.choices[0].message.content or ""
-    payload = _parse_json_payload(message)
-    payload = _ensure_chinese_payload(client, settings, payload)
+    payload = _parse_json_payload(response.choices[0].message.content or "")
+    normalized_payload = _normalize_payload(payload)
+    normalized_payload = _ensure_chinese_payload(client, settings, normalized_payload)
+    return _build_article_summary(article, normalized_payload, used_fallback=False)
 
-    return ArticleSummary(
-        source=article.source,
-        title=article.title,
-        link=article.link,
-        canonical_link=article.canonical_link,
-        published_at=article.published_at,
-        risk_level=_normalize_risk_level(payload.get("risk_level")),
-        keywords=_normalize_keywords(payload.get("keywords")),
-        summary=_normalize_summary(payload.get("summary")),
-        important_points=_normalize_points(payload.get("important_points")),
-        used_fallback=False,
-        matched_focus_keywords=article.matched_focus_keywords,
+
+def _build_batch_prompt(
+    article_lookup: dict[str, Article],
+    settings: Settings,
+) -> str:
+    items = []
+    for article_id, article in article_lookup.items():
+        items.append(
+            {
+                "id": article_id,
+                "title": article.title,
+                "source": article.source,
+                "published_at": article.published_at or "Unknown",
+                "focus_keywords": article.matched_focus_keywords,
+                "content_excerpt": _compact_article_text(article, settings),
+            }
+        )
+
+    return (
+        "请批量处理下面这些网络安全资讯，输出严格 JSON，不要输出其他说明。\n\n"
+        "要求：\n"
+        "1. items 中每个对象必须对应一个输入 id，不能遗漏。\n"
+        "2. summary 为 2-4 句中文摘要，优先保留事件、影响、建议。\n"
+        "3. 如果原文是英文，先翻译关键信息，再输出简体中文。\n"
+        "4. keywords 输出 3-5 个关键词，尽量中文化。\n"
+        "5. important_points 输出 2-3 条中文要点。\n"
+        "6. 不要编造信息，不确定就写信息有限。\n\n"
+        f"{json.dumps(items, ensure_ascii=False)}"
     )
 
 
-def _build_prompt(article: Article) -> str:
-    content = article.content[:8000]
+def _build_single_prompt(article: Article, settings: Settings) -> str:
     return f"""
 请为下面这篇网络安全资讯生成中文摘要，输出严格 JSON，不要输出其他说明。
 
@@ -112,11 +240,18 @@ def _build_prompt(article: Article) -> str:
 标题: {article.title}
 来源: {article.source}
 发布时间: {article.published_at or "Unknown"}
+命中关注词: {", ".join(article.matched_focus_keywords) or "无"}
 链接: {article.link}
 
 文章内容：
-{content}
+{_compact_article_text(article, settings)}
 """.strip()
+
+
+def _compact_article_text(article: Article, settings: Settings) -> str:
+    text = article.content or article.summary_hint or article.title
+    text = re.sub(r"\s+", " ", text).strip()
+    return text[: settings.max_llm_input_chars_per_article]
 
 
 def _parse_json_payload(raw_text: str) -> dict:
@@ -135,6 +270,15 @@ def _parse_json_payload(raw_text: str) -> dict:
     return payload
 
 
+def _normalize_payload(payload: dict) -> dict:
+    return {
+        "summary": _normalize_summary(payload.get("summary")),
+        "risk_level": _normalize_risk_level(payload.get("risk_level")),
+        "keywords": _normalize_keywords(payload.get("keywords")),
+        "important_points": _normalize_points(payload.get("important_points")),
+    }
+
+
 def _normalize_risk_level(value: object) -> str:
     text = str(value or "").strip()
     if text in {"高", "中", "低"}:
@@ -145,7 +289,12 @@ def _normalize_risk_level(value: object) -> str:
 def _normalize_keywords(value: object) -> list[str]:
     if not isinstance(value, list):
         return []
-    keywords = [str(item).strip() for item in value if str(item).strip()]
+
+    keywords: list[str] = []
+    for item in value:
+        keyword = str(item).strip()
+        if keyword and keyword not in keywords:
+            keywords.append(keyword)
     return keywords[:5]
 
 
@@ -159,8 +308,36 @@ def _normalize_summary(value: object) -> str:
 def _normalize_points(value: object) -> list[str]:
     if not isinstance(value, list):
         return []
-    points = [str(item).strip() for item in value if str(item).strip()]
+
+    points: list[str] = []
+    for item in value:
+        point = str(item).strip()
+        if point and point not in points:
+            points.append(point)
     return points[:4]
+
+
+def _build_article_summary(
+    article: Article,
+    payload: dict,
+    used_fallback: bool,
+) -> ArticleSummary:
+    summary = ArticleSummary(
+        source=article.source,
+        title=article.title,
+        link=article.link,
+        canonical_link=article.canonical_link,
+        published_at=article.published_at,
+        category="",
+        risk_level=_normalize_risk_level(payload.get("risk_level")),
+        keywords=_normalize_keywords(payload.get("keywords")),
+        summary=_normalize_summary(payload.get("summary")),
+        important_points=_normalize_points(payload.get("important_points")),
+        used_fallback=used_fallback,
+        matched_focus_keywords=article.matched_focus_keywords,
+    )
+    summary.category = categorize_summary(summary)
+    return summary
 
 
 def _build_fallback_summary(article: Article) -> ArticleSummary:
@@ -171,18 +348,15 @@ def _build_fallback_summary(article: Article) -> ArticleSummary:
         + ("；".join(points[:3]) or "未能从原文中提取足够内容，请检查源站是否可访问。")
     )
 
-    return ArticleSummary(
-        source=article.source,
-        title=article.title,
-        link=article.link,
-        canonical_link=article.canonical_link,
-        published_at=article.published_at,
-        risk_level=_infer_risk_level(text),
-        keywords=_guess_keywords(article),
-        summary=summary,
-        important_points=points[:3] or [article.title],
+    return _build_article_summary(
+        article,
+        {
+            "risk_level": _infer_risk_level(text),
+            "keywords": _guess_keywords(article),
+            "summary": summary,
+            "important_points": points[:3] or [article.title],
+        },
         used_fallback=True,
-        matched_focus_keywords=article.matched_focus_keywords,
     )
 
 
@@ -194,10 +368,10 @@ def _ensure_chinese_payload(
     if _payload_is_mostly_chinese(payload):
         return payload
 
-    rewrite_response = client.chat.completions.create(
-        model=settings.llm_model,
-        temperature=0.1,
-        messages=[
+    rewrite_response = _chat_complete(
+        client,
+        settings,
+        [
             {
                 "role": "system",
                 "content": (
@@ -215,9 +389,10 @@ def _ensure_chinese_payload(
                 ),
             },
         ],
+        temperature=0.1,
     )
     rewrite_message = rewrite_response.choices[0].message.content or ""
-    rewritten_payload = _parse_json_payload(rewrite_message)
+    rewritten_payload = _normalize_payload(_parse_json_payload(rewrite_message))
     if _payload_is_mostly_chinese(rewritten_payload):
         return rewritten_payload
     return payload
@@ -255,8 +430,48 @@ def _infer_risk_level(text: str) -> str:
 
 
 def _guess_keywords(article: Article) -> list[str]:
+    keywords = list(article.matched_focus_keywords)
     candidates = re.findall(r"[A-Za-z0-9][A-Za-z0-9._-]{2,}", article.title)
-    keywords = candidates[:4]
+    for candidate in candidates:
+        if candidate not in keywords:
+            keywords.append(candidate)
     if article.source not in keywords:
         keywords.append(article.source)
     return keywords[:5]
+
+
+def _chunked(items: list[Article], size: int) -> list[list[Article]]:
+    iterator = iter(items)
+    chunks: list[list[Article]] = []
+    while True:
+        chunk = list(islice(iterator, size))
+        if not chunk:
+            break
+        chunks.append(chunk)
+    return chunks
+
+
+def _chat_complete(
+    client: OpenAI,
+    settings: Settings,
+    messages: list[dict[str, str]],
+    temperature: float,
+):
+    attempts = max(1, settings.llm_retry_count + 1)
+    last_error: Exception | None = None
+
+    for attempt in range(1, attempts + 1):
+        try:
+            return client.chat.completions.create(
+                model=settings.llm_model,
+                temperature=temperature,
+                messages=messages,
+                timeout=max(60, settings.request_timeout_seconds * 3),
+            )
+        except Exception as exc:
+            last_error = exc
+            if attempt >= attempts:
+                break
+            time.sleep(min(2 * attempt, 6))
+
+    raise RuntimeError(f"LLM request failed after {attempts} attempts: {last_error}")

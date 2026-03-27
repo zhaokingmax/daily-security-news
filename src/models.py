@@ -23,6 +23,7 @@ class ArticleSummary:
     link: str
     canonical_link: str
     published_at: str
+    category: str
     risk_level: str
     keywords: list[str]
     summary: str

@@ -7,7 +7,7 @@ from .config import load_settings
 from .feeds import FEEDS
 from .fetcher import fetch_new_articles
 from .storage import load_seen_urls, save_seen_urls
-from .summarizer import summarize_article
+from .summarizer import summarize_articles
 from .writer import write_reports
 
 
@@ -23,21 +23,15 @@ def main() -> int:
     if not articles:
         return 0
 
-    summaries = []
-    successful_urls: set[str] = set()
-
-    for article in articles:
-        try:
-            summary = summarize_article(article, settings)
-            summaries.append(summary)
-            successful_urls.add(article.canonical_link)
-            print(f"Summarized: {article.title}")
-        except Exception as exc:
-            print(f"Failed to summarize article: {article.link} | {exc}")
-
+    summaries = summarize_articles(articles, settings)
     if not summaries:
         print("No article summaries were generated.")
         return 1
+
+    successful_urls = {summary.canonical_link for summary in summaries}
+    llm_count = sum(1 for summary in summaries if not summary.used_fallback)
+    fallback_count = len(summaries) - llm_count
+    print(f"LLM summaries: {llm_count} | Fallback summaries: {fallback_count}")
 
     run_timestamp = datetime.now(settings.timezone).isoformat(timespec="seconds")
     write_reports(
@@ -54,4 +48,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -85,10 +85,11 @@ Daily Security News
 2. 过滤已处理链接。
 3. 尝试抓取正文。
 4. 调用大模型生成中文摘要。
-5. 英文内容优先翻译后生成中文摘要。
-6. 按关注关键词优先排序，并过滤黑名单内容。
-7. 生成 JSON 和 Markdown 报告。
-8. 自动提交 `data/` 和 `state/` 回仓库。
+5. 使用批量摘要减少 token 消耗，并对失败文章自动单篇重试。
+6. 英文内容优先翻译后生成中文摘要。
+7. 按关注关键词优先排序，不够时自动补充非关键词资讯，并过滤黑名单内容。
+8. 生成 JSON 和 Markdown 报告，顶部附带分类清单。
+9. 自动提交 `data/` 和 `state/` 回仓库。
 
 ## 本地运行
 
@@ -110,8 +111,11 @@ python -m src.main
 - `LLM_BASE_URL`
 - `LLM_MODEL`
 - `TZ_NAME`，默认 `Asia/Shanghai`
-- `MAX_ARTICLES_PER_RUN`，默认 `12`
-- `MAX_ARTICLES_PER_FEED`，默认 `4`
+- `MAX_ARTICLES_PER_RUN`，默认 `50`
+- `MAX_ARTICLES_PER_FEED`，默认 `8`
+- `LLM_BATCH_SIZE`，默认 `5`；批量送给大模型，减少重复提示词的 token 开销
+- `LLM_RETRY_COUNT`，默认 `2`；模型调用失败时自动重试
+- `MAX_LLM_INPUT_CHARS_PER_ARTICLE`，默认 `2500`；每篇送入模型的正文截断长度
 - `ENABLE_CONTENT_FETCH`，默认 `true`
 - `ALLOW_FALLBACK_SUMMARY`，默认 `true`；没有配置模型或模型调用失败时会回退
 - `FOCUS_KEYWORDS`，可选，逗号分隔；默认内置关注词，支持中英文匹配与优先排序
@@ -137,6 +141,7 @@ python -m src.main
       "link": "https://example.com/article",
       "canonical_link": "https://example.com/article",
       "published_at": "2026-03-27T00:01:00+00:00",
+      "category": "终端安全与EDR/XDR",
       "risk_level": "高",
       "keywords": ["勒索软件", "漏洞利用", "补丁"],
       "summary": "中文摘要",
@@ -151,6 +156,28 @@ python -m src.main
 ### `state/seen_urls.json`
 
 用于去重，避免同一篇文章被重复处理。
+
+### `data/latest.md`
+
+最上方会先输出今日分类清单，按 10+ 个主流安全主题把标题分组，便于快速浏览：
+
+- AI安全与安全智能体
+- 身份与访问控制
+- 终端安全与 EDR/XDR
+- APT 与国家级威胁
+- 运营商与关键基础设施
+- 漏洞与补丁
+- 恶意软件与勒索软件
+- 钓鱼与社工诈骗
+- 数据泄露与隐私
+- 云安全与容器
+- 网络与边界安全
+- 应用安全与供应链
+- 威胁情报与研判
+- 安全运营与 SOC
+- 工控与物联网安全
+- 政策合规与治理
+- 综合资讯
 
 ## 数据源
 

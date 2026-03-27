@@ -63,18 +63,27 @@ def _build_markdown_report(
     generated_at: str,
     items: list[dict],
 ) -> str:
+    llm_count = sum(1 for item in items if not item.get("used_fallback"))
+    fallback_count = len(items) - llm_count
     lines = [
         f"# {report_title} | {report_date}",
         "",
         f"- 生成时间: {generated_at}",
         f"- 文章数量: {len(items)}",
+        f"- 大模型摘要: {llm_count}",
+        f"- 回退摘要: {fallback_count}",
+        "",
+        "## 分类清单",
         "",
     ]
+    lines.extend(_build_category_index(items))
+    lines.extend(["", "## 详细内容", ""])
 
     for index, item in enumerate(items, start=1):
         lines.extend(
             [
                 f"## {index}. {item['title']}",
+                f"- 分类: {item.get('category') or '综合资讯'}",
                 f"- 来源: {item['source']}",
                 f"- 发布时间: {item.get('published_at') or 'Unknown'}",
                 f"- 风险等级: {item['risk_level']}",
@@ -94,3 +103,27 @@ def _build_markdown_report(
         lines.append("")
 
     return "\n".join(lines).strip() + "\n"
+
+
+def _build_category_index(items: list[dict]) -> list[str]:
+    grouped: dict[str, list[str]] = {}
+    for item in items:
+        category = item.get("category") or "综合资讯"
+        grouped.setdefault(category, []).append(item["title"])
+
+    ordered_categories = sorted(
+        grouped.items(),
+        key=lambda pair: (-len(pair[1]), pair[0]),
+    )
+
+    lines: list[str] = []
+    for category, titles in ordered_categories:
+        lines.append(f"### {category}（{len(titles)}）")
+        for title in titles:
+            lines.append(f"- {title}")
+        lines.append("")
+
+    if not lines:
+        lines.append("- 暂无分类结果")
+
+    return lines

@@ -94,6 +94,9 @@ class Settings:
     timezone_name: str
     max_articles_per_feed: int
     max_articles_per_run: int
+    llm_batch_size: int
+    llm_retry_count: int
+    max_llm_input_chars_per_article: int
     request_timeout_seconds: int
     user_agent: str
     enable_content_fetch: bool
@@ -132,8 +135,11 @@ def load_settings(base_dir: Path | None = None) -> Settings:
         llm_base_url=os.getenv("LLM_BASE_URL", "https://api.openai.com/v1"),
         llm_model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
         timezone_name=os.getenv("TZ_NAME", "Asia/Shanghai"),
-        max_articles_per_feed=_read_int("MAX_ARTICLES_PER_FEED", 4),
-        max_articles_per_run=_read_int("MAX_ARTICLES_PER_RUN", 12),
+        max_articles_per_feed=_read_int("MAX_ARTICLES_PER_FEED", 8),
+        max_articles_per_run=_read_int("MAX_ARTICLES_PER_RUN", 50),
+        llm_batch_size=_read_int("LLM_BATCH_SIZE", 5),
+        llm_retry_count=_read_int("LLM_RETRY_COUNT", 2),
+        max_llm_input_chars_per_article=_read_int("MAX_LLM_INPUT_CHARS_PER_ARTICLE", 2500),
         request_timeout_seconds=_read_int("REQUEST_TIMEOUT_SECONDS", 20),
         user_agent=os.getenv(
             "REQUEST_USER_AGENT",

@@ -54,7 +54,7 @@ GENERIC_TITLES = {
     "发表评论",
     "首页",
 }
-SOURCE_SCAN_MULTIPLIER = 4
+SOURCE_SCAN_MULTIPLIER = 6
 
 
 @dataclass(slots=True)
