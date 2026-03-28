@@ -1,7 +1,7 @@
 {
   "date": "2026-03-28",
-  "generated_at": "2026-03-28T09:46:20+08:00",
-  "count": 50,
+  "generated_at": "2026-03-28T11:30:32+08:00",
+  "count": 99,
   "items": [
     {
       "source": "CyberScoop",
@@ -131,6 +131,60 @@
       "matched_focus_keywords": []
     },
     {
+      "source": "Infosecurity Magazine",
+      "title": "New Wave of AiTM Phishing Targets TikTok for Business",
+      "title_zh": "新型AiTM钓鱼攻击瞄准TikTok企业账户",
+      "link": "https://www.infosecurity-magazine.com/news/phishing-targets-tiktok-for/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/phishing-targets-tiktok-for",
+      "published_at": "2026-03-27T16:01:00",
+      "category": "钓鱼与社工诈骗",
+      "risk_level": "高",
+      "keywords": [
+        "AiTM钓鱼",
+        "TikTok企业账户",
+        "中间人攻击",
+        "凭证窃取",
+        "钓鱼攻击"
+      ],
+      "summary": "安全公司Push Security发现新型中间人(AiTM)钓鱼攻击，专门针对TikTok for Business账户。攻击者于3月24日在9秒内注册大量钓鱼页面，使用Cloudflare托管并通过Nicenic International Group注册商批量注册域名。钓鱼页面伪装成TikTok或Google招聘页面，利用Cloudflare Turnstile防止安全分析，最终将用户导向AiTM钓鱼工具包以窃取凭证。",
+      "important_points": [
+        "钓鱼域名采用welcome.careers*[.]com命名规则，预计将持续增加",
+        "页面先重定向到合法Google Cloud Storage再加载恶意内容",
+        "TikTok for Business账户常被营销团队用于管理广告活动"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "microsoft"
+      ]
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "TeamPCP Targets Telnyx Package in Latest Software Supply Chain Attack",
+      "title_zh": "TeamPCP攻击Telnyx Python包供应链",
+      "link": "https://www.infosecurity-magazine.com/news/teampcp-targets-telnyx-pypi-package/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/teampcp-targets-telnyx-pypi-package",
+      "published_at": "2026-03-27T15:06:00",
+      "category": "运营商与关键基础设施",
+      "risk_level": "高",
+      "keywords": [
+        "供应链攻击",
+        "PyPI恶意包",
+        "TeamPCP",
+        "凭证窃取",
+        "Telnyx"
+      ],
+      "summary": "网络威胁组织TeamPCP再次扩大供应链攻击范围，针对PyPI上的Telnyx Python SDK发起攻击。攻击者发布了被篡改的4.87.1和4.87.2版本，包含窃取敏感信息的恶意代码。Telnyx是提供电话、短信、MMS等电信服务的云通信平台。安全研究人员警告用户不要使用这些恶意版本。",
+      "important_points": [
+        "该组织此前已攻击Trivy和LiteLLM等开源项目",
+        "恶意版本通过typosquatting诱骗开发者下载",
+        "研究人员建议立即检查并移除受影响的包版本"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "telecom"
+      ]
+    },
+    {
       "source": "SecurityWeek",
       "title": "In Other News: Palo Alto Recruiter Scam, Anti-Deepfake Chip, Google Sets 2029 Quantum Deadline",
       "link": "https://www.securityweek.com/in-other-news-palo-alto-recruiter-scam-anti-deepfake-chip-google-sets-2029-quantum-deadline/",
@@ -155,6 +209,228 @@
       "matched_focus_keywords": [
         "palo alto"
       ]
+    },
+    {
+      "source": "SecurityWeek",
+      "title": "OpenAI Launches Bug Bounty Program for Abuse and Safety Risks",
+      "title_zh": "OpenAI推出安全漏洞赏金计划",
+      "link": "https://www.securityweek.com/openai-launches-bug-bounty-program-for-abuse-and-safety-risks/",
+      "canonical_link": "https://www.securityweek.com/openai-launches-bug-bounty-program-for-abuse-and-safety-risks",
+      "published_at": "2026-03-27T13:33:11+00:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "低",
+      "keywords": [
+        "漏洞赏金",
+        "OpenAI",
+        "安全风险",
+        "AI安全"
+      ],
+      "summary": "OpenAI宣布推出新的漏洞赏金计划，将奖励报告导致实质性伤害的设计或实施问题的安全研究人员。该计划旨在发现和修复AI系统中的安全漏洞和风险。",
+      "important_points": [
+        "奖励范围涵盖导致材料损害的设计或实施问题",
+        "这是OpenAI加强安全措施的举措之一"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Dark Reading",
+      "title": "Infrastructure Attacks With Physical Consequences Down 25%",
+      "title_zh": "针对物理基础设施的网络攻击下降25%",
+      "link": "https://www.darkreading.com/threat-intelligence/infrastructure-attacks-physical-consequences-down",
+      "canonical_link": "https://www.darkreading.com/threat-intelligence/infrastructure-attacks-physical-consequences-down",
+      "published_at": "2026-03-27T13:30:00+00:00",
+      "category": "恶意软件与勒索软件",
+      "risk_level": "低",
+      "keywords": [
+        "OT安全",
+        "勒索软件",
+        "关键基础设施",
+        "网络攻击"
+      ],
+      "summary": "工业和关键基础设施领域的运营技术(OT)系统正受益于勒索软件攻击的减少，以及黑客对OT系统相对缺乏了解。安全专家观察到针对OT环境的攻击有所下降。",
+      "important_points": [
+        "针对OT系统的攻击同比下降约25%",
+        "攻击者对OT系统的了解和攻击能力相对有限"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "UK Cracks Down on Chinese Crypto Marketplace for Funding Scam Hubs",
+      "title_zh": "英国制裁涉嫌资助诈骗中心的加密货币市场",
+      "link": "https://www.infosecurity-magazine.com/news/uk-sanction-chinese-crypto/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/uk-sanction-chinese-crypto",
+      "published_at": "2026-03-27T12:00:00",
+      "category": "钓鱼与社工诈骗",
+      "risk_level": "中",
+      "keywords": [
+        "加密货币制裁",
+        "诈骗中心",
+        "东南亚",
+        "英国制裁",
+        "洗钱"
+      ],
+      "summary": "英国政府宣布制裁涉嫌资助东南亚诈骗中心的个人和组织。目标包括Xinbi——该地区最大的非法在线加密货币市场，资金流入超197亿美元。Xinbi为柬埔寨最大诈骗园区#8 Park提供服务，并被指控为朝鲜洗钱。英国首次对Xinbi实施制裁。",
+      "important_points": [
+        "Xinbi是东南亚最大的非法加密货币市场",
+        "#8 Park可容纳2万名被贩运人员实施在线诈骗",
+        "英国还制裁了Legend Innovation等关联公司和个人"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "SecurityWeek",
+      "title": "TP-Link Patches High-Severity Router Vulnerabilities",
+      "title_zh": "TP-Link修复高危路由器漏洞",
+      "link": "https://www.securityweek.com/tp-link-patches-high-severity-router-vulnerabilities/",
+      "canonical_link": "https://www.securityweek.com/tp-link-patches-high-severity-router-vulnerabilities",
+      "published_at": "2026-03-27T11:42:30+00:00",
+      "category": "漏洞与补丁",
+      "risk_level": "中",
+      "keywords": [
+        "路由器漏洞",
+        "TP-Link",
+        "身份验证绕过",
+        "命令执行"
+      ],
+      "summary": "TP-Link已修复其路由器中的多个高危安全漏洞。这些缺陷可被利用来绕过身份验证、执行任意命令和解密配置文件。安全研究人员发现了这些漏洞，厂商已发布补丁。",
+      "important_points": [
+        "漏洞等级为高危",
+        "可被用于绕过认证、执行任意命令"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "SecurityWeek",
+      "title": "RSAC 2026 Conference Announcements Summary (Days 3-4)",
+      "title_zh": "RSAC 2026大会第三四天厂商公告汇总",
+      "link": "https://www.securityweek.com/rsac-2026-conference-announcements-summary-days-3-4/",
+      "canonical_link": "https://www.securityweek.com/rsac-2026-conference-announcements-summary-days-3-4",
+      "published_at": "2026-03-27T10:48:53+00:00",
+      "category": "综合资讯",
+      "risk_level": "低",
+      "keywords": [
+        "RSAC 2026",
+        "SecurityWeek",
+        "网络安全会议",
+        "厂商公告",
+        "RSA大会"
+      ],
+      "summary": "本文为RSAC 2026大会第三天和第四天厂商公告的汇总文章，发布于SecurityWeek。由于文章内容仅包含简要描述，未提供具体公告详情，信息较为有限。建议关注SecurityWeek官网获取完整的厂商公告内容。RSAC作为网络安全行业重要年度会议，历来是厂商发布新产品和安全解决方案的重要平台。",
+      "important_points": [
+        "文章为RSAC 2026大会第三四天厂商公告的汇总报道",
+        "文章内容较为简略，未包含具体厂商公告详情",
+        "建议访问原文链接获取完整公告信息",
+        "RSAC大会是网络安全行业重要年度会议"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "SecurityWeek",
+      "title": "Coruna iOS Exploit Kit Likely an Update to Operation Triangulation",
+      "title_zh": "Coruna iOS漏洞工具包或为三角测量行动升级版",
+      "link": "https://www.securityweek.com/coruna-ios-exploit-kit-likely-an-update-to-operation-triangulation/",
+      "canonical_link": "https://www.securityweek.com/coruna-ios-exploit-kit-likely-an-update-to-operation-triangulation",
+      "published_at": "2026-03-27T10:35:20+00:00",
+      "category": "漏洞与补丁",
+      "risk_level": "高",
+      "keywords": [
+        "Coruna",
+        "iOS Exploit Kit",
+        "Operation Triangulation",
+        "内核漏洞",
+        "移动威胁"
+      ],
+      "summary": "安全研究机构SecurityWeek于2026年3月27日披露，发现名为Coruna的iOS漏洞利用工具包，该工具包可能为三年前Operation Triangulation行动的更新版本。Coruna包含了针对iOS系统的内核漏洞利用程序的更新版本。Operation Triangulation是此前发现的高级iOS攻击活动，使用复杂的零日漏洞针对特定目标发起攻击。研究人员指出，Coruna的出现表明威胁行为者仍在持续改进其iOS攻击能力，建议iOS用户及时更新系统以修复已知漏洞。",
+      "important_points": [
+        "Coruna iOS漏洞利用工具包被发现，可能是Operation Triangulation的更新版本",
+        "该工具包包含针对iOS内核的漏洞利用更新程序",
+        "Operation Triangulation为三年前发现的高级持续性威胁活动",
+        "建议用户及时安装iOS系统更新以修复安全漏洞"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "Dutch Police discloses security breach after phishing attack",
+      "title_zh": "荷兰警察遭钓鱼攻击致安全漏洞 已紧急阻断未波及公民数据",
+      "link": "https://www.bleepingcomputer.com/news/security/dutch-police-discloses-security-breach-after-phishing-attack/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/dutch-police-discloses-security-breach-after-phishing-attack",
+      "published_at": "2026-03-27",
+      "category": "APT与国家级威胁",
+      "risk_level": "中",
+      "keywords": [
+        "荷兰警察",
+        "钓鱼攻击",
+        "安全漏洞",
+        "Security Operations Center",
+        "数据泄露"
+      ],
+      "summary": "荷兰国家警察近日披露一起因钓鱼攻击导致的安全事件。警方安全运营中心（Security Operations Center）快速检测到攻击并立即阻断入侵通道。官方声明称此次事件影响有限，公民数据和调查信息未遭泄露或访问。目前警方正在进一步调查事件影响范围，并已启动刑事调查。值得注意的是，荷兰警察 Corps 于2024年9月也曾遭受与\"国家行为者\"相关的网络攻击，导致多名警员的工作联系信息泄露。",
+      "important_points": [
+        "警方安全运营中心快速检测到入侵并及时阻断，限制了攻击影响范围",
+        "官方确认公民数据和调查信息未在此次事件中泄露",
+        "2024年9月荷兰警察曾遭受国家级网络攻击，导致警员联系信息泄露",
+        "警方已实施更强安全措施，包括持续监控系统异常活动"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "security operations center"
+      ]
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "European Commission investigating breach after Amazon cloud account hack",
+      "title_zh": "欧盟委员会调查AWS云账户被入侵事件",
+      "link": "https://www.bleepingcomputer.com/news/security/european-commission-investigating-breach-after-amazon-cloud-account-hack/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/european-commission-investigating-breach-after-amazon-cloud-account-hack",
+      "published_at": "2026-03-27",
+      "category": "恶意软件与勒索软件",
+      "risk_level": "高",
+      "keywords": [
+        "数据泄露",
+        "欧盟委员会",
+        "AWS云",
+        "网络入侵"
+      ],
+      "summary": "欧盟委员会正在调查一起安全事件，攻击者获得了委员会Amazon云环境的访问权限。威胁actor声称窃取了超过350GB数据（包括多个数据库），但表示不会勒索而计划日后公开泄露。委员会网络安全事件响应团队已介入调查。",
+      "important_points": [
+        "攻击者获取了委员会员工信息和邮件服务器数据",
+        "委员会1月还发现移动设备管理平台被入侵",
+        "AWS表示其服务本身未发生安全事件"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "CSO Online",
+      "title": "Cyberangriff auf die Linke",
+      "title_zh": "德国左翼党遭受网络攻击",
+      "link": "https://www.csoonline.com/article/4151169/cyberangriff-auf-die-linke.html",
+      "canonical_link": "https://www.csoonline.com/article/4151169/cyberangriff-auf-die-linke.html",
+      "published_at": "2026-03-27",
+      "category": "数据泄露与隐私",
+      "risk_level": "中",
+      "keywords": [
+        "网络攻击",
+        "德国左翼党",
+        "数据窃取",
+        "疑似俄语黑客"
+      ],
+      "summary": "德国左翼党(Die Linke)遭受网络攻击，据该党称疑似俄语黑客试图窃取员工数据。党发言人表示成员数据库未受影响，目前攻击事件仍在调查中。",
+      "important_points": [
+        "攻击者目标是员工数据而非成员数据库",
+        "疑似俄语黑客实施的攻击",
+        "成员数据未泄露"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
     },
     {
       "source": "The Hacker News",
@@ -357,6 +633,361 @@
       ]
     },
     {
+      "source": "CyberScoop",
+      "title": "ODNI tackles AI, threat hunting, app cybersecurity in year-one tech review",
+      "title_zh": "美国国家情报总监办公室发布首年网络安全现代化成果",
+      "link": "https://cyberscoop.com/odni-tackles-ai-threat-hunting-app-cybersecurity-in-year-one-tech-review/",
+      "canonical_link": "https://cyberscoop.com/odni-tackles-ai-threat-hunting-app-cybersecurity-in-year-one-tech-review",
+      "published_at": "2026-03-26T22:58:17+00:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "中",
+      "keywords": [
+        "ODNI",
+        "AI",
+        "零信任",
+        "威胁狩猎",
+        "网络安全现代化"
+      ],
+      "summary": "美国国家情报总监办公室（ODNI）宣布完成为期一年的网络安全加强和技术现代化工作，制定了利用人工智能增强网络防御的政策标准，建立了经过网络安全审查的应用程序共享存储库，并在情报社区网络扩展了威胁狩猎自动化。该办公室还开发了零信任战略，转向“数据为中心的安全模型”，无论信息位于何处或使用何种网络都能提供保护。这是ODNI在 Gabbard 领导下的首个重大网络安全公告，也是历史上最大的情报社区技术投资和现代化努力。",
+      "important_points": [
+        "美国情报机构启动史上最大规模的全社区技术投资和现代化工作",
+        "制定AI网络防御政策标准并建立应用安全审查共享库",
+        "威胁狩猎自动化扩展至情报社区网络层面",
+        "采用数据为中心的零信任安全模型进行信息保护"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Dark Reading",
+      "title": "Coruna, DarkSword & Democratizing Nation-State Exploit Kits",
+      "title_zh": "国家级漏洞利用工具包在暗网售卖并泄露至GitHub",
+      "link": "https://www.darkreading.com/endpoint-security/coruna-darksword-democratizing-nation-state-exploit-kits",
+      "canonical_link": "https://www.darkreading.com/endpoint-security/coruna-darksword-democratizing-nation-state-exploit-kits",
+      "published_at": "2026-03-26T19:56:41+00:00",
+      "category": "APT与国家级威胁",
+      "risk_level": "高",
+      "keywords": [
+        "Coruna",
+        "DarkSword",
+        "国家级漏洞利用工具包",
+        "暗网",
+        "GitHub"
+      ],
+      "summary": "据Dark Reading报道，新型国家级网络攻击工具Coruna和DarkSword正在暗网进行售卖，同时相关恶意软件源码已被泄露至GitHub等公开平台。这些原本由国家级黑客开发的高级漏洞利用工具包正在向普通网络犯罪分子扩散，意味着任何人都可能获取并使用曾经仅限于政府机构的高级网络攻击能力。普通企业和组织缺乏足够的资源和技术能力来抵御此类高级持续性威胁，面临的网络安全风险急剧上升。建议相关单位加强网络安全防护，及时更新系统补丁，并密切监控异常网络活动。",
+      "important_points": [
+        "Coruna和DarkSword等国家级恶意软件正在暗网公开售卖",
+        "恶意软件源码已泄露至GitHub等公开平台，攻击门槛大幅降低",
+        "普通组织缺乏资源抵御此类高级网络攻击",
+        "网络安全威胁正从国家级行为体向普通犯罪分子扩散"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Dark Reading",
+      "title": "Is the FCC's Router Ban the Wrong Fix?",
+      "title_zh": "FCC路由器禁令引争议 被指可能带来更多问题",
+      "link": "https://www.darkreading.com/endpoint-security/fcc-router-ban-wrong-fix",
+      "canonical_link": "https://www.darkreading.com/endpoint-security/fcc-router-ban-wrong-fix",
+      "published_at": "2026-03-26T19:48:32+00:00",
+      "category": "网络与边界安全",
+      "risk_level": "中",
+      "keywords": [
+        "FCC",
+        "路由器禁令",
+        "供应链安全",
+        "政策监管",
+        "国家安全"
+      ],
+      "summary": "美国联邦通信委员会(FCC)将外国制造的消费级路由器列入禁止通信设备清单，旨在应对潜在的国家安全风险。该禁令引发业界广泛担忧，批评者认为可能扰乱供应链并增加消费者成本。业内专家警告，此举可能适得其反，导致网络安全状况反而恶化。目前该政策的具体实施细节和豁免条款尚未完全明确。",
+      "important_points": [
+        "FCC将外国制造的消费级路由器列入禁止通信设备清单",
+        "禁令可能扰乱供应链并推高消费者设备成本",
+        "批评者认为该政策可能产生适得其反的效果",
+        "政策具体实施细节和豁免条款尚未完全明确"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Dark Reading",
+      "title": "Automotive Cybersecurity Threats Grow in Era of Connected, Autonomous Vehicles",
+      "title_zh": "联网自动驾驶时代汽车网络安全威胁日益严峻",
+      "link": "https://www.darkreading.com/vulnerabilities-threats/automotive-cybersecurity-threats-grow-connected-autonomous-vehicles",
+      "canonical_link": "https://www.darkreading.com/vulnerabilities-threats/automotive-cybersecurity-threats-grow-connected-autonomous-vehicles",
+      "published_at": "2026-03-26T19:48:21+00:00",
+      "category": "漏洞与补丁",
+      "risk_level": "中",
+      "keywords": [
+        "汽车网络安全",
+        "车联网",
+        "自动驾驶",
+        "联网汽车",
+        "吉普车黑客"
+      ],
+      "summary": "自2015年吉普车被黑客攻击事件以来已过去十余年，车辆网络安全问题依然至关重要。随着联网汽车和自动驾驶技术的快速发展，汽车行业面临的网络安全威胁持续增加。攻击者可能利用车联网系统的漏洞对车辆进行远程控制，危及行车安全和用户隐私。建议汽车制造商加强安全设计，将网络安全纳入车辆全生命周期管理。",
+      "important_points": [
+        "2015年吉普车黑客事件标志着汽车网络安全问题的开端",
+        "联网和自动驾驶技术的普及扩大了攻击面",
+        "车辆远程控制漏洞可能危及人身安全",
+        "需要从车辆设计阶段就将网络安全纳入考量"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Dark Reading",
+      "title": "Critical Flaw in Langflow AI Platform Under Attack",
+      "title_zh": "Langflow AI 平台关键漏洞遭黑客快速利用",
+      "link": "https://www.darkreading.com/vulnerabilities-threats/critical-flaw-langflow-ai-platform-under-attack",
+      "canonical_link": "https://www.darkreading.com/vulnerabilities-threats/critical-flaw-langflow-ai-platform-under-attack",
+      "published_at": "2026-03-26T19:14:05+00:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "高",
+      "keywords": [
+        "Langflow",
+        "代码注入",
+        "漏洞利用",
+        "AI安全"
+      ],
+      "summary": "Langflow AI 平台存在代码注入漏洞，披露后数小时内即被威胁行为者利用。攻击速度之快表明组织应对关键漏洞的时间极其有限。该漏洞属于严重级别，建议用户尽快应用官方发布的安全补丁。",
+      "important_points": [
+        "漏洞披露后数小时内即被攻击者利用",
+        "代码注入漏洞影响严重",
+        "组织需紧急响应关键安全漏洞"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "CyberScoop",
+      "title": "FCC pushes new rules to crack down on robocallers, foreign call centers",
+      "title_zh": "FCC 出台新规打击机器人电话和境外呼叫中心",
+      "link": "https://cyberscoop.com/fcc-votes-to-crack-down-on-robcallers-foreign-call-centers/",
+      "canonical_link": "https://cyberscoop.com/fcc-votes-to-crack-down-on-robcallers-foreign-call-centers",
+      "published_at": "2026-03-26T18:59:02+00:00",
+      "category": "运营商与关键基础设施",
+      "risk_level": "中",
+      "keywords": [
+        "FCC",
+        "机器人电话",
+        "电信监管",
+        "号码认证"
+      ],
+      "summary": "美国联邦通信委员会（FCC）一致通过新规，提高电话号码获取的认证和披露要求，以遏制非法机器人电话。新规还要求电信运营商加强对网络呼叫者的身份披露，增加转售号码的监管难度。FCC 旨在切断垃圾电话和诈骗分子获取正规电话号码的渠道。",
+      "important_points": [
+        "新规要求获取电话号码需更高认证和披露",
+        "监管范围扩大至所有号码提供商和转售商",
+        "旨在切断非法呼叫者获取正规号码的途径"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "CyberScoop",
+      "title": "Former NSA chiefs worry American offensive edge in cybersecurity is slipping",
+      "title_zh": "前 NSA 负责人担忧美国网络进攻优势减弱",
+      "link": "https://cyberscoop.com/former-nsa-chiefs-offensive-edge-rsac/",
+      "canonical_link": "https://cyberscoop.com/former-nsa-chiefs-offensive-edge-rsac",
+      "published_at": "2026-03-26T17:20:23+00:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "中",
+      "keywords": [
+        "NSA",
+        "网络安全",
+        "AI威胁",
+        "中美网络对抗"
+      ],
+      "summary": "四位前 NSA 局长在 RSAC 2026 大会上表示，对网络威胁缺乏有效应对感到担忧。他们指出 AI、中国和网络犯罪带来的威胁日益加剧，同时美国政府面临人才流失问题，公共与私营部门协作不足。前 NSA 局长 Nakasone 表示已对网络入侵麻木，入侵规模已到了令人难以置信的程度。",
+      "important_points": [
+        "四位前 NSA 局长警告网络威胁应对不力",
+        "美国政府面临人才流失和资源不足",
+        "公共与私营部门网络安全协作存在差距"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "Researchers Sound the Alarm on Vulnerabilities in AI-Generated Code",
+      "title_zh": "研究人员警告 AI 生成代码导致漏洞激增",
+      "link": "https://www.infosecurity-magazine.com/news/ai-generated-code-vulnerabilities/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/ai-generated-code-vulnerabilities",
+      "published_at": "2026-03-26T16:40:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "高",
+      "keywords": [
+        "AI代码",
+        "CVE漏洞",
+        "Vibe Security Radar",
+        "佐治亚理工"
+      ],
+      "summary": "佐治亚理工学院研究人员启动 Vibe Security Radar 项目，追踪 AI 编码工具引入的漏洞。2026 年 3 月已披露 35 个相关 CVE，较 1 月的 6 个和 2 月的 15 个大幅上升。研究人员追踪约 50 款 AI 辅助编程工具，包括 Claude Code、GitHub Copilot 等。",
+      "important_points": [
+        "2026年3月AI生成代码相关CVE达35个",
+        "项目追踪约50款AI编程工具",
+        "即使进行代码审查也难以完全发现AI生成代码的问题"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "ai agents"
+      ]
+    },
+    {
+      "source": "Dark Reading",
+      "title": "How Organizations Can Use Mistakes to Level Up Their Security Programs",
+      "title_zh": "企业如何通过错误改进安全计划",
+      "link": "https://www.darkreading.com/cybersecurity-operations/blunders-level-up-security-programs",
+      "canonical_link": "https://www.darkreading.com/cybersecurity-operations/blunders-level-up-security-programs",
+      "published_at": "2026-03-26T15:29:32+00:00",
+      "category": "漏洞与补丁",
+      "risk_level": "中",
+      "keywords": [
+        "安全错误",
+        "端口暴露",
+        "密码复用",
+        "补丁管理"
+      ],
+      "summary": "行业资深人士指出，组织经常暴露端口、重复使用密码、跳过安全更新补丁，这些常见错误为攻击者提供了可乘之机。文章概述了修复这些安全错误的方法，强调需要建立规范的配置管理和补丁更新流程。",
+      "important_points": [
+        "常见错误包括暴露端口、重复密码、跳过更新",
+        "攻击者利用这些漏洞实施入侵",
+        "建议建立规范的配置和补丁管理流程"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "EtherRAT Techniques Bypass Security Via Ethereum Smart Contracts",
+      "title_zh": "EtherRAT 利用以太坊智能合约隐藏 C2 基础设施",
+      "link": "https://www.infosecurity-magazine.com/news/etherrat-bypass-security-ethereum/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/etherrat-bypass-security-ethereum",
+      "published_at": "2026-03-26T15:00:00",
+      "category": "钓鱼与社工诈骗",
+      "risk_level": "高",
+      "keywords": [
+        "EtherRAT",
+        "EtherHiding",
+        "以太坊智能合约",
+        "恶意软件"
+      ],
+      "summary": "研究人员发现新型 EtherRAT 恶意软件活动，利用以太坊智能合约隐藏命令与控制（C2）基础设施。该技术称为 EtherHiding，允许攻击者低成本轮换基础设施以躲避传统打击。攻击通过 ClickFix 攻击和 Microsoft Teams 上的 IT 支持诈骗获取初始访问权限。",
+      "important_points": [
+        "利用以太坊智能合约存储 C2 地址",
+        "可通过更新智能合约内容切换 C2 服务器",
+        "通过 ClickFix 和 IT 支持诈骗获取初始访问"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "microsoft"
+      ]
+    },
+    {
+      "source": "Dark Reading",
+      "title": "AI-Powered Dependency Decisions Introduce, Ignore Security Bugs",
+      "title_zh": "AI 依赖决策引入并忽视安全漏洞",
+      "link": "https://www.darkreading.com/application-security/ai-powered-dependency-decisions-security-bugs",
+      "canonical_link": "https://www.darkreading.com/application-security/ai-powered-dependency-decisions-security-bugs",
+      "published_at": "2026-03-26T14:44:16+00:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "中",
+      "keywords": [
+        "AI依赖",
+        "技术债务",
+        "安全漏洞",
+        "版本推荐"
+      ],
+      "summary": "AI 模型在推荐软件版本、升级路径和安全修复时经常产生幻觉或做出代价高昂的错误，导致严重的技术债务。研究表明 AI 辅助的依赖管理可能引入新的安全风险，建议在部署前进行人工审核。",
+      "important_points": [
+        "AI 模型推荐软件版本时容易出错",
+        "AI 决策可能引入新的安全漏洞",
+        "建议对 AI 生成的依赖建议进行人工审核"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "SecurityWeek",
+      "title": "Hightower Holding Data Breach Impacts 130,000",
+      "title_zh": "Hightower Holding数据泄露影响13万人",
+      "link": "https://www.securityweek.com/hightower-holding-data-breach-impacts-130000/",
+      "canonical_link": "https://www.securityweek.com/hightower-holding-data-breach-impacts-130000",
+      "published_at": "2026-03-26T14:07:07+00:00",
+      "category": "数据泄露与隐私",
+      "risk_level": "高",
+      "keywords": [
+        "数据泄露",
+        "个人信息",
+        "社会安全号码",
+        "驾驶执照",
+        "美国"
+      ],
+      "summary": "Hightower Holding公司遭受黑客攻击，导致约13万人的敏感信息泄露。被盗数据包括姓名、社会安全号码和驾驶执照号码。目前尚不清楚数据泄露的具体时间和攻击方式。",
+      "important_points": [
+        "约13万人受影响",
+        "泄露信息包括姓名、社保号和驾照号",
+        "属于持有公司性质的数据泄露事件"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "SecurityWeek",
+      "title": "BIND Updates Patch High-Severity Vulnerabilities",
+      "title_zh": "BIND更新修复高危漏洞",
+      "link": "https://www.securityweek.com/bind-updates-patch-high-severity-vulnerabilities-2/",
+      "canonical_link": "https://www.securityweek.com/bind-updates-patch-high-severity-vulnerabilities-2",
+      "published_at": "2026-03-26T13:31:40+00:00",
+      "category": "漏洞与补丁",
+      "risk_level": "高",
+      "keywords": [
+        "BIND",
+        "DNS",
+        "高危漏洞",
+        "内存泄漏",
+        "服务器"
+      ],
+      "summary": "互联网系统公司（ISC）发布BIND更新，修复可导致内存耗尽的高危漏洞。攻击者可通过精心构造的域名触发BIND解析器的内存泄漏问题。建议用户尽快更新到最新版本。",
+      "important_points": [
+        "特殊构造的域名可导致内存耗尽",
+        "影响BIND解析器",
+        "建议尽快更新补丁"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "AI is the Top Cyber Priority for Defenders as Criminals Exploit it",
+      "title_zh": "AI成为网络安全首要关注点",
+      "link": "https://www.infosecurity-magazine.com/news/ai-top-cyber-priority-defenders-pwc/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/ai-top-cyber-priority-defenders-pwc",
+      "published_at": "2026-03-26T13:15:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "高",
+      "keywords": [
+        "AI威胁",
+        "网络安全",
+        "暗网LLM",
+        "钓鱼攻击",
+        "Agentic AI"
+      ],
+      "summary": "普华永道报告显示，AI驱动威胁已成为客户最常提及的担忧，同时AI也是防御者的首要网络安全投资重点。网络犯罪分子利用AI加速恶意软件开发、自动化侦察，并使用暗网LLM生成钓鱼内容。",
+      "important_points": [
+        "AI同时增强攻击者和防御者能力",
+        "Agentic AI工具被快速武器化",
+        "暗网LLM帮助攻击者生成多语言钓鱼内容"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "ai agent",
+        "ai agents",
+        "agentic"
+      ]
+    },
+    {
       "source": "SecurityWeek",
       "title": "Chinese Hackers Caught Deep Within Telecom Backbone Infrastructure",
       "link": "https://www.securityweek.com/chinese-hackers-caught-deep-within-telecom-backbone-infrastructure/",
@@ -379,6 +1010,395 @@
       "matched_focus_keywords": [
         "telecom"
       ]
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "OpenAI Expands Bug Bounty to Cover AI Abuse and",
+      "title_zh": "OpenAI推出AI滥用安全漏洞赏金计划",
+      "link": "https://www.infosecurity-magazine.com/news/openai-bug-bounty-ai-abuse-safety/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/openai-bug-bounty-ai-abuse-safety",
+      "published_at": "2026-03-26T12:20:00",
+      "category": "AI安全与安全智能体",
+      "risk_level": "低",
+      "keywords": [
+        "OpenAI",
+        "漏洞赏金",
+        "AI安全",
+        "Bugcrowd",
+        "提示注入"
+      ],
+      "summary": "OpenAI于3月26日宣布推出新的Safety Bug Bounty安全漏洞赏金计划，在Bugcrowd平台上托管，旨在鼓励研究人员发现AI滥用和安全风险。该计划涵盖代理风险、第三方提示注入、数据泄露、账户完整性违规等问题，与现有的Security Bug Bounty计划互补。自2023年4月推出以来，原计划已奖励了409个安全漏洞。",
+      "important_points": [
+        "新计划涵盖AI滥用、代理风险、账户完整性等安全问题",
+        "与原有Security Bug Bounty计划形成互补",
+        "一般内容策略绕过无明确安全影响的不在奖励范围内"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "agentic"
+      ]
+    },
+    {
+      "source": "Dark Reading",
+      "title": "Intermediaries Driving Global Spyware Market Expansion",
+      "title_zh": "中间商推动全球间谍软件市场扩张",
+      "link": "https://www.darkreading.com/cyber-risk/intermediaries-driving-global-spyware-market-expansion",
+      "canonical_link": "https://www.darkreading.com/cyber-risk/intermediaries-driving-global-spyware-market-expansion",
+      "published_at": "2026-03-26T12:04:31+00:00",
+      "category": "综合资讯",
+      "risk_level": "中",
+      "keywords": [
+        "间谍软件",
+        "中间商",
+        "网络监控",
+        "出口管制",
+        "网络威胁"
+      ],
+      "summary": "研究发现，第三方经销商和经纪人正在破坏政府限制间谍软件的透明度努力，允许间谍软件在全球范围内扩散。这些中间商作为供应商和客户之间的桥梁，规避了出口管制和政府制裁，使 spyware 能够持续传播。",
+      "important_points": [
+        "第三方经销商和经纪人绕过政府限制和透明度措施",
+        "中间商在供应商和客户之间充当桥梁，规避出口管制",
+        "尽管有政府限制，间谍软件仍在全球扩散"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "Iran-Linked Pay2Key Ransomware Group Re-Emerges",
+      "title_zh": "伊朗Pay2Key勒索软件组织重现江湖",
+      "link": "https://www.infosecurity-magazine.com/news/iranlinked-pay2key-ransomware/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/iranlinked-pay2key-ransomware",
+      "published_at": "2026-03-26T10:45:00",
+      "category": "终端安全与EDR/XDR",
+      "risk_level": "高",
+      "keywords": [
+        "勒索软件",
+        "Pay2Key",
+        "伊朗",
+        "医疗行业",
+        "横向移动"
+      ],
+      "summary": "安全专家警告，伊朗关联的Pay2Key勒索软件组织重新活跃，具备更强的规避、执行和反取证能力。该组织近期攻击了美国医疗机构，使用TeamViewer、Mimikatz、LaZagne等工具进行横向移动，并部署了\"No Defender\"规避工具包。整个加密过程仅用3小时。",
+      "important_points": [
+        "组织具备\"No Defender\"规避工具包，可绑过安全检测",
+        "使用TeamViewer建立交互访问并通过Mimikatz等工具窃取凭据",
+        "整个基础设施加密过程仅需3小时"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "Invoice Fraud Costs UK Construction Sector Millions, NCA Warns",
+      "title_zh": "英国建筑行业发票欺诈损失数百万英镑",
+      "link": "https://www.infosecurity-magazine.com/news/invoice-fraud-uk-construction/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/invoice-fraud-uk-construction",
+      "published_at": "2026-03-26T10:07:00",
+      "category": "钓鱼与社工诈骗",
+      "risk_level": "高",
+      "keywords": [
+        "发票欺诈",
+        "BEC",
+        "建筑行业",
+        "英国NCA",
+        "金融诈骗"
+      ],
+      "summary": "英国国家犯罪局(NCA)与建筑商全国联合会联合警告建筑行业面临严重的发票欺诈风险。2025年9月此类诈骗造成受害者损失近400万英镑，报告83起案件。建筑和制造业占2024/25年度发票欺诈的四分之一，发票欺诈属于商业邮件泄露(BEC)的一种形式。",
+      "important_points": [
+        "2025年9月损失近400万英镑，83起案件",
+        "建筑行业因承包商网络复杂而特别容易受到攻击",
+        "诈骗者通过伪造供应商银行详细信息进行欺诈"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "The Hacker News",
+      "title": "Masters of Imitation: How Hackers and Art Forgers Perfect the Art of Deception",
+      "title_zh": "黑客与艺术伪造者：模仿的艺术",
+      "link": "https://thehackernews.com/2026/03/masters-of-imitation-how-hackers-and.html",
+      "canonical_link": "https://thehackernews.com/2026/03/masters-of-imitation-how-hackers-and.html",
+      "published_at": "2026-03-26",
+      "category": "AI安全与安全智能体",
+      "risk_level": "中",
+      "keywords": [
+        "AI攻击",
+        "模仿攻击",
+        "无恶意软件攻击",
+        "SOC安全",
+        "网络检测响应"
+      ],
+      "summary": "文章以艺术伪造者Elmyr de Hory的案例类比现代网络攻击。de Hory在20世纪60年代伪造毕加索、马蒂斯等大师作品，欺骗了专家数十年。如今网络攻击者同样利用AI技术模仿可信用户，将恶意活动隐藏在合法进程中。数据显示81%的攻击是无恶意软件的，代理AI正帮助攻击者更有效地隐藏在正常网络流量中。",
+      "important_points": [
+        "81%的现代攻击采用无恶意软件的模仿技术",
+        "代理AI使攻击者能更有效地隐藏在正常网络流量中",
+        "需要多层次防御和NDR技术来检测和阻止伪造攻击"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "ai agents",
+        "agentic",
+        "soc",
+        "crowdstrike",
+        "microsoft"
+      ]
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "Ajax football club hack exposed fan data, enabled ticket hijack",
+      "title_zh": "阿贾克斯俱乐部系统被黑 数十万球迷数据面临风险",
+      "link": "https://www.bleepingcomputer.com/news/security/ajax-football-club-hack-exposed-fan-data-enabled-ticket-hijack/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/ajax-football-club-hack-exposed-fan-data-enabled-ticket-hijack",
+      "published_at": "2026-03-26",
+      "category": "漏洞与补丁",
+      "risk_level": "高",
+      "keywords": [
+        "阿贾克斯",
+        "数据泄露",
+        "足球俱乐部",
+        "安全漏洞",
+        "球迷数据"
+      ],
+      "summary": "荷兰阿贾克斯足球俱乐部近日披露，其IT系统存在严重安全漏洞，导致黑客能够访问约数百人的邮箱地址，以及不到20名被禁赛球迷的姓名、邮箱和出生日期。记者验证发现，漏洞甚至允许转让季票和修改禁赛记录，涉及约42000张季票、538个禁赛记录和超过30万个账户信息。俱乐部表示已修补漏洞并聘请外部专家调查，但暴露的数据尚未泄露。建议受影响的球迷关注账户安全，警惕钓鱼攻击。",
+      "important_points": [
+        "黑客可访问数百人邮箱及部分禁赛球迷个人信息",
+        "漏洞允许转让季票和修改体育场禁赛记录",
+        "记者验证发现可操纵约42000张季票和30万账户信息",
+        "俱乐部已修补漏洞并聘请外部专家调查"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "TikTok for Business accounts targeted in new phishing campaign",
+      "title_zh": "钓鱼攻击瞄准TikTok企业账户",
+      "link": "https://www.bleepingcomputer.com/news/security/tiktok-for-business-accounts-targeted-in-new-phishing-campaign/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/tiktok-for-business-accounts-targeted-in-new-phishing-campaign",
+      "published_at": "2026-03-26",
+      "category": "钓鱼与社工诈骗",
+      "risk_level": "高",
+      "keywords": [
+        "钓鱼攻击",
+        "TikTok企业账户",
+        "Cloudflare",
+        "恶意页面",
+        "凭据窃取"
+      ],
+      "summary": "网络犯罪分子正在发起针对TikTok for Business账户的钓鱼活动，使用Cloudflare托管恶意页面并通过NiceNIC注册。攻击通过合法Google Storage URL重定向，利用Cloudflare Turnstile检查阻止安全机器人分析。钓鱼页面冒充TikTok for Business和Google Careers进行凭据窃取。",
+      "important_points": [
+        "攻击者注册多个类似careers的域名托管钓鱼页面",
+        "使用Cloudflare Turnstile阻止安全机器人检测",
+        "TikTok企业账户因高影响力成为恶意广告和欺诈的目标"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "UK sanctions Xinbi marketplace linked to Asian scam centers",
+      "title_zh": "英国制裁与亚洲诈骗中心相关的 Xinbi 市场",
+      "link": "https://www.bleepingcomputer.com/news/security/uk-sanctions-xinbi-marketplace-linked-to-asian-scam-centers/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/uk-sanctions-xinbi-marketplace-linked-to-asian-scam-centers",
+      "published_at": "2026-03-26",
+      "category": "运营商与关键基础设施",
+      "risk_level": "高",
+      "keywords": [
+        "英国制裁",
+        "Xinbi",
+        "诈骗中心",
+        "加密货币洗钱"
+      ],
+      "summary": "英国外交部宣布制裁 Xinbi 中文在线市场，该平台向东南亚诈骗网络出售被盗数据和卫星互联网设备。Xinbi 还涉嫌帮助朝鲜威胁行为者洗钱，2021-2025 年处理超过 199 亿美元交易。同日英国还制裁了柬埔寨最大诈骗园区 #8 Park 及其运营商。",
+      "important_points": [
+        "Xinbi 2021-2025年处理超199亿美元交易",
+        "#8 Park 诈骗园区可容纳2万名被拐卖工人",
+        "英国首次制裁 Xinbi 这类大型非法市场"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "The Hacker News",
+      "title": "[Webinar] Stop Guessing. Learn to Validate Your Defenses Against Real Attacks",
+      "title_zh": "网络研讨会：验证安全防御应对真实攻击",
+      "link": "https://thehackernews.com/2026/03/webinar-stop-guessing-learn-to-validate.html",
+      "canonical_link": "https://thehackernews.com/2026/03/webinar-stop-guessing-learn-to-validate.html",
+      "published_at": "2026-03-26",
+      "category": "安全运营与SOC",
+      "risk_level": "低",
+      "keywords": [
+        "安全验证",
+        "SOC",
+        "红队",
+        "渗透测试",
+        "网络研讨会"
+      ],
+      "summary": "The Hacker News举办网络研讨会，主题为\"暴露驱动的弹性：自动化测试验证和改进安全态势\"。研讨会将展示如何持续使用真实攻击行为验证安全控制，以及如何将测试融入SOC和事件响应工作流程。",
+      "important_points": [
+        "强调持续验证安全控制而非假设其有效",
+        "使用真实攻击行为进行压力测试",
+        "将验证融入日常安全工作流程"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "soc"
+      ]
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "Inside a Modern Fraud Attack: From Bot Signups to Account Takeovers",
+      "title_zh": "现代欺诈攻击链分析：从机器人注册到账户接管",
+      "link": "https://www.bleepingcomputer.com/news/security/inside-a-modern-fraud-attack-from-bot-signups-to-account-takeovers/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/inside-a-modern-fraud-attack-from-bot-signups-to-account-takeovers",
+      "published_at": "2026-03-26",
+      "category": "综合资讯",
+      "risk_level": "中",
+      "keywords": [
+        "欺诈攻击",
+        "账户接管",
+        "机器人",
+        "住宅代理",
+        "凭证填充"
+      ],
+      "summary": "现代欺诈攻击如同接力赛，攻击者使用机器人批量注册账户、住宅代理隐藏流量、然后转为人工操作进行账户接管和变现。单一信号检查难以发现完整攻击链，导致误报率高。",
+      "important_points": [
+        "攻击链从自动化注册到人工接管分工明确",
+        "住宅代理使流量看起来像普通家庭用户",
+        "单点检查难以发现完整攻击链，误报问题严重"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "CSO Online",
+      "title": "10 essenzielle Maßnahmen für physische Sicherheit",
+      "title_zh": "物理安全防护的十个关键措施",
+      "link": "https://www.csoonline.com/article/3493920/10-essenzielle-masnahmen-fur-physische-sicherheit.html",
+      "canonical_link": "https://www.csoonline.com/article/3493920/10-essenzielle-masnahmen-fur-physische-sicherheit.html",
+      "published_at": "2026-03-26",
+      "category": "综合资讯",
+      "risk_level": "中",
+      "keywords": [
+        "物理安全",
+        "建筑安全",
+        "设施保护",
+        "安全措施"
+      ],
+      "summary": "保障建筑群和设备的物理安全可能与应对网络威胁同样具有挑战性。CSO Online概述了十个基本物理安全措施，帮助企业全面提升安全防护能力。",
+      "important_points": [
+        "物理安全与网络安全同等重要",
+        "需要系统性的防护方法"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "The Hacker News",
+      "title": "ThreatsDay Bulletin: PQC Push, AI Vuln Hunting, Pirated Traps, Phishing Kits & 20 More Stories",
+      "title_zh": "本周安全简报：后量子密码学、AI漏洞狩猎与钓鱼工具包",
+      "link": "https://thehackernews.com/2026/03/threatsday-bulletin-pqc-push-ai-vuln.html",
+      "canonical_link": "https://thehackernews.com/2026/03/threatsday-bulletin-pqc-push-ai-vuln.html",
+      "published_at": "2026-03-26",
+      "category": "AI安全与安全智能体",
+      "risk_level": "中",
+      "keywords": [
+        "后量子密码学",
+        "量子计算",
+        "AI安全",
+        "钓鱼工具包",
+        "漏洞狩猎"
+      ],
+      "summary": "本周安全新闻涵盖多个领域：Google公布2029年后量子密码学(PQC)迁移时间表，应对量子计算对当前加密标准的威胁；安全研究人员发现AI驱动的漏洞狩猎工具；同时发现盗版软件陷阱和钓鱼工具包等威胁。量子计算机对加密的威胁已涉及\"现在存储将来解密\"攻击，数字签名则面临未来威胁。",
+      "important_points": [
+        "Google公布2029年PQC迁移时间表应对量子计算威胁",
+        "量子计算机对当前加密标准构成重大威胁",
+        "本周安全事件涵盖钓鱼工具包、盗版陷阱等多种威胁"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "crowdstrike",
+        "microsoft",
+        "edr",
+        "endpoint detection and response",
+        "apt"
+      ]
+    },
+    {
+      "source": "The Hacker News",
+      "title": "WebRTC Skimmer Bypasses CSP to Steal Payment Data from E-Commerce Sites",
+      "title_zh": "新型WebRTC支付窃取器绑过内容安全策略",
+      "link": "https://thehackernews.com/2026/03/webrtc-skimmer-bypasses-csp-to-steal.html",
+      "canonical_link": "https://thehackernews.com/2026/03/webrtc-skimmer-bypasses-csp-to-steal.html",
+      "published_at": "2026-03-26",
+      "category": "漏洞与补丁",
+      "risk_level": "高",
+      "keywords": [
+        "WebRTC",
+        "支付窃取器",
+        "PolyShell",
+        "Magento",
+        "电商安全"
+      ],
+      "summary": "研究人员发现新型支付窃取器利用WebRTC数据通道接收有效载荷并窃取数据，成功绑过安全控制。该攻击针对汽车制造商电商网站，利用PolyShell漏洞（影响Magento Open Source和Adobe Commerce）上传任意可执行文件。WebRTC使用DTLS加密的UDP流量，传统网络安全工具难以检测。",
+      "important_points": [
+        "WebRTC数据通道可绑过内容安全策略(CSP)",
+        "使用DTLS加密的UDP流量，网络安全工具无法检测",
+        "PolyShell漏洞自2026年3月19日起被大规模利用"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "Russia arrests suspected owner of LeakBase cybercrime forum",
+      "title_zh": "俄罗斯逮捕LeakBase网络犯罪论坛所有者",
+      "link": "https://www.bleepingcomputer.com/news/security/russia-arrests-suspected-owner-and-admin-of-leakbase-cybercrime-forum/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/russia-arrests-suspected-owner-and-admin-of-leakbase-cybercrime-forum",
+      "published_at": "2026-03-26",
+      "category": "数据泄露与隐私",
+      "risk_level": "中",
+      "keywords": [
+        "LeakBase",
+        "网络犯罪论坛",
+        "FBI执法",
+        "数据泄露",
+        "暗网"
+      ],
+      "summary": "俄罗斯警方在塔甘罗格地区逮捕了一名居民，疑似为LeakBase网络犯罪论坛的所有者和管理员。LeakBase成立于2021年，在Breached论坛于2023年3月关闭后，会员数量增长至超过14.2万人。2026年3月，美国FBI与14个国家的执法部门联合开展\"Operation Leak\"行动取缔了该论坛，目前网站已显示FBI查封通知。",
+      "important_points": [
+        "LeakBase是主要的数据交易和黑客工具销售平台，会员超14万",
+        "2026年3月FBI联合14国执法部门成功取缔该论坛",
+        "论坛数据库和内容将作为未来调查的证据"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "WhatsApp rolls out more AI features, iOS multi-account support",
+      "title_zh": "WhatsApp推出AI功能和iOS多账户支持",
+      "link": "https://www.bleepingcomputer.com/news/software/whatsapp-rolls-out-more-ai-features-ios-multi-account-support/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/software/whatsapp-rolls-out-more-ai-features-ios-multi-account-support",
+      "published_at": "2026-03-26",
+      "category": "AI安全与安全智能体",
+      "risk_level": "低",
+      "keywords": [
+        "WhatsApp",
+        "AI功能",
+        "多账户",
+        "iOS",
+        "隐私保护"
+      ],
+      "summary": "WhatsApp正在推出多项新功能，包括AI驱动的消息回复和照片修饰功能、支持iOS设备同时登录两个账户、以及iOS与Android之间的聊天记录迁移。Meta还推出了针对青少年的家长管理账户和新反欺诈保护功能。",
+      "important_points": [
+        "AI消息回复和照片修饰功能基于Private Processing技术保护隐私",
+        "iOS设备现支持同时登录两个WhatsApp账户",
+        "新增家长管理功能和反欺诈保护"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
     },
     {
       "source": "CSO Online",
@@ -432,6 +1452,31 @@
     },
     {
       "source": "CSO Online",
+      "title": "GitHub phishers use fake OpenClaw tokens to drain crypto wallets",
+      "title_zh": "GitHub钓鱼攻击利用虚假OpenClaw代币窃取加密钱包",
+      "link": "https://www.csoonline.com/article/4150456/github-phishers-use-fake-openclaw-tokens-to-drain-crypto-wallets.html",
+      "canonical_link": "https://www.csoonline.com/article/4150456/github-phishers-use-fake-openclaw-tokens-to-drain-crypto-wallets.html",
+      "published_at": "2026-03-26",
+      "category": "钓鱼与社工诈骗",
+      "risk_level": "高",
+      "keywords": [
+        "钓鱼攻击",
+        "加密货币",
+        "OpenClaw",
+        "GitHub",
+        "钱包窃取"
+      ],
+      "summary": "攻击者利用OpenClaw项目热度，通过虚假的\"CLAW\"空投活动从GitHub吸引开发者到钓鱼网站，窃取加密货币钱包。攻击者伪装成合法的OpenClaw项目，诱骗开发者连接钱包后盗取资金。",
+      "important_points": [
+        "攻击者利用OpenClaw热度进行虚假空投钓鱼",
+        "目标为GitHub上的开发者群体",
+        "通过钓鱼网站窃取加密货币钱包"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "CSO Online",
       "title": "Databricks pitches Lakewatch as a cheaper SIEM — but is it really?",
       "link": "https://www.csoonline.com/article/4150512/databricks-pitches-lakewatch-as-a-cheaper-siem-but-is-it-really-2.html",
       "canonical_link": "https://www.csoonline.com/article/4150512/databricks-pitches-lakewatch-as-a-cheaper-siem-but-is-it-really-2.html",
@@ -453,6 +1498,182 @@
       "matched_focus_keywords": [
         "agentic"
       ]
+    },
+    {
+      "source": "BleepingComputer",
+      "title": "Coruna iOS exploit framework linked to Triangulation attacks",
+      "title_zh": "Coruna iOS漏洞利用框架与三角测量行动关联",
+      "link": "https://www.bleepingcomputer.com/news/security/coruna-ios-exploit-framework-linked-to-triangulation-attacks/",
+      "canonical_link": "https://www.bleepingcomputer.com/news/security/coruna-ios-exploit-framework-linked-to-triangulation-attacks",
+      "published_at": "2026-03-26",
+      "category": "漏洞与补丁",
+      "risk_level": "高",
+      "keywords": [
+        "Coruna",
+        "iOS漏洞",
+        "三角测量行动",
+        "零点击攻击",
+        "间谍软件"
+      ],
+      "summary": "安全研究显示，Coruna漏洞利用工具包是2023年三角测量行动(Operation Triangulation)框架的演进版本，针对苹果A17和M3芯片及iOS 17.2系统。该工具包包含5个完整iOS漏洞利用链和23个漏洞，其中CVE-2023-32434和CVE-2023-38606与三角测量行动相同。卡巴斯基分析确认Coruna使用的是自2019年开始的三角测量行动漏洞的更新版本，攻击从Safari开始，通过指纹识别设备后选择合适的RCE和PAC漏洞进行攻击。",
+      "important_points": [
+        "Coruna是三角测量行动框架的持续演进版本，针对现代苹果硬件",
+        "包含23个漏洞，其中CVE-2023-32434和CVE-2023-38606被重复使用",
+        "攻击从Safari开始，使用ChaCha20加密和LZMA压缩"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "The Hacker News",
+      "title": "Coruna iOS Kit Reuses 2023 Triangulation Exploit Code in Recent Mass Attacks",
+      "title_zh": "Coruna iOS工具包在大规模攻击中重用三角测量漏洞代码",
+      "link": "https://thehackernews.com/2026/03/coruna-ios-kit-reuses-2023.html",
+      "canonical_link": "https://thehackernews.com/2026/03/coruna-ios-kit-reuses-2023.html",
+      "published_at": "2026-03-26",
+      "category": "漏洞与补丁",
+      "risk_level": "高",
+      "keywords": [
+        "Coruna",
+        "iOS漏洞",
+        "三角测量行动",
+        "PlasmaLoader",
+        "水坑攻击"
+      ],
+      "summary": "卡巴斯基最新研究发现，Coruna iOS漏洞利用工具包中针对两个安全漏洞的内核漏洞是2023年三角测量行动(Operation Triangulation)所用漏洞的更新版本。Coruna包含5个完整iOS漏洞利用链和23个漏洞，包括CVE-2023-32434和CVE-2023-38606。该工具包最初被一家未具名监控公司的客户使用，后来被疑似俄罗斯关联的国家行为者用于乌克兰水坑攻击和大规模恶意软件分发活动。",
+      "important_points": [
+        "Coruna是三角测量行动框架的持续维护演进版本",
+        "被疑似俄罗斯国家行为者用于乌克兰水坑攻击和大规模活动",
+        "针对iOS 13.0至17.2.1版本的iPhone设备"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "The Hacker News",
+      "title": "Claude Extension Flaw Enabled Zero-Click XSS Prompt Injection via Any Website",
+      "title_zh": "Claude浏览器扩展漏洞可实现零点击XSS注入",
+      "link": "https://thehackernews.com/2026/03/claude-extension-flaw-enabled-zero.html",
+      "canonical_link": "https://thehackernews.com/2026/03/claude-extension-flaw-enabled-zero.html",
+      "published_at": "2026-03-26",
+      "category": "AI安全与安全智能体",
+      "risk_level": "高",
+      "keywords": [
+        "Claude",
+        "XSS漏洞",
+        "浏览器扩展",
+        "提示注入",
+        "零点击攻击"
+      ],
+      "summary": "安全研究人员发现Anthropic Claude Chrome扩展存在\"ShadowPrompt\"漏洞，允许任意网站通过零点击方式向Claude注入恶意提示。该漏洞结合了过于宽松的域名白名单和Arkose Labs验证码组件的XSS漏洞，可窃取敏感数据并冒充用户执行操作。",
+      "important_points": [
+        "漏洞允许任何网站静默注入提示到Claude助手",
+        "结合域名白名单宽松和XSS两个缺陷",
+        "可窃取访问令牌和对话历史"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": [
+        "ai agent"
+      ]
+    },
+    {
+      "source": "CyberScoop",
+      "title": "Alleged RedLine infostealer conspirator extradited to US",
+      "title_zh": "RedLine信息窃取器相关嫌疑人被引渡至美国",
+      "link": "https://cyberscoop.com/alleged-redline-infostealer-conspirator-extradited-to-us/",
+      "canonical_link": "https://cyberscoop.com/alleged-redline-infostealer-conspirator-extradited-to-us",
+      "published_at": "2026-03-25T22:25:08+00:00",
+      "category": "网络与边界安全",
+      "risk_level": "高",
+      "keywords": [
+        "RedLine",
+        "信息窃取器",
+        "引渡",
+        "网络犯罪",
+        "凭据盗窃"
+      ],
+      "summary": "亚美尼亚男子Hambardzum Minasyan被引渡至美国，涉嫌参与开发和管理RedLine信息窃取器。RedLine是全球最流行的信息窃取器之一，每年窃取数十亿用户凭据。嫌疑人被指控共谋实施访问设备欺诈、共谋违反《计算机欺诈和滥用法案》以及共谋洗钱。",
+      "important_points": [
+        "RedLine是全球最流行的信息窃取器之一",
+        "2024年美国联合多国开展Operation Magnus行动进行打击",
+        "嫌疑人注册VPN服务器托管RedLine并建立文件共享仓库"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Dark Reading",
+      "title": "At RSAC, the EU Leads While US Officials Are Sidelined",
+      "title_zh": "RSAC大会上欧盟官员主导对话 美国官员被边缘化",
+      "link": "https://www.darkreading.com/cyber-risk/rsac-eu-leads-us-officials-sidelined",
+      "canonical_link": "https://www.darkreading.com/cyber-risk/rsac-eu-leads-us-officials-sidelined",
+      "published_at": "2026-03-25T21:52:38+00:00",
+      "category": "综合资讯",
+      "risk_level": "低",
+      "keywords": [
+        "RSAC",
+        "网络安全会议",
+        "欧盟",
+        "美国",
+        "国际合作"
+      ],
+      "summary": "在美国政府缺席今年RSAC大会的情况下，欧盟官员在旧金山主导了关于当前首要网络安全挑战的讨论，体现了欧盟在网络安全领域的积极姿态。",
+      "important_points": [
+        "美国政府缺席今年RSAC大会",
+        "欧盟官员在旧金山主导网络安全讨论"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "CyberScoop",
+      "title": "Google moves post-quantum encryption timeline up to 2029",
+      "title_zh": "谷歌将后量子加密迁移时间表提前至2029年",
+      "link": "https://cyberscoop.com/google-moves-post-quantum-encryption-timeline-to-2029/",
+      "canonical_link": "https://cyberscoop.com/google-moves-post-quantum-encryption-timeline-to-2029",
+      "published_at": "2026-03-25T21:44:14+00:00",
+      "category": "综合资讯",
+      "risk_level": "中",
+      "keywords": [
+        "后量子加密",
+        "量子计算",
+        "谷歌",
+        "NIST",
+        "数据安全"
+      ],
+      "summary": "谷歌将产品迁移到抗量子加密的时间表提前至2029年，反映出科技行业对量子计算发展加速的担忧。谷歌正在用经过NIST审核的新算法替换设备和系统中的过时加密算法，以防范未来量子计算机攻击，并呼吁其他企业加快准备。",
+      "important_points": [
+        "量子计算硬件进展超预期",
+        "谷歌计划2029年前完成迁移，提前于NIST的2035年指南",
+        "呼吁其他企业将谷歌的时间表作为参考"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
+    },
+    {
+      "source": "Infosecurity Magazine",
+      "title": "Cloud Phones Linked to Rising Financial Fraud Threat",
+      "title_zh": "云手机服务沦为金融欺诈工具 检测困难加剧风险",
+      "link": "https://www.infosecurity-magazine.com/news/cloud-phones-financial-fraud/",
+      "canonical_link": "https://www.infosecurity-magazine.com/news/cloud-phones-financial-fraud",
+      "published_at": "2026-03-25T16:05:00",
+      "category": "云安全与容器",
+      "risk_level": "高",
+      "keywords": [
+        "云手机",
+        "金融欺诈",
+        "移动设备",
+        "骡子账户",
+        "APP欺诈"
+      ],
+      "summary": "安全研究显示，云手机技术正被犯罪分子用于实施金融欺诈。这类远程安卓设备托管在数据中心，运行真实移动系统，但难以被传统欺诈检测系统识别。犯罪分子利用云手机创建\"骡子账户\"接收和转移被盗资金，英国2022年授权支付欺诈损失达4.85亿英镑。云手机平台低价出租虚拟设备，使欺诈门槛大幅降低。",
+      "important_points": [
+        "云手机运行真实移动操作系统，行为与正常智能手机相似，欺诈检测系统难以区分",
+        "英国2022年授权支付欺诈损失达4.85亿英镑，骡子账户是主要推手",
+        "低价云手机租赁服务使欺诈基础设施对个人用户开放"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
     },
     {
       "source": "Dark Reading",
@@ -507,6 +1728,31 @@
         "ai agents",
         "microsoft"
       ]
+    },
+    {
+      "source": "The Hacker News",
+      "title": "LeakBase Admin Arrested in Russia Over Massive Stolen Credential Marketplace",
+      "title_zh": "俄罗斯逮捕LeakBase网络犯罪论坛管理员",
+      "link": "https://thehackernews.com/2026/03/leakbase-admin-arrested-in-russia-over.html",
+      "canonical_link": "https://thehackernews.com/2026/03/leakbase-admin-arrested-in-russia-over.html",
+      "published_at": "2026-03-25",
+      "category": "数据泄露与隐私",
+      "risk_level": "高",
+      "keywords": [
+        "LeakBase",
+        "网络犯罪论坛",
+        "凭证泄露",
+        "俄罗斯",
+        "数据交易"
+      ],
+      "summary": "俄罗斯执法部门逮捕了LeakBase网络犯罪论坛的管理员。该平台是全球最大的被盗凭证交易枢纽之一，拥有数亿用户账户、银行详细信息、用户名和密码。论坛拥有超过14.2万名注册用户，本月执法行动已捣毁该论坛。",
+      "important_points": [
+        "平台交易数亿用户账户和金融信息",
+        "超过14.2万名注册用户，21.5万条消息",
+        "美国司法部称其为全球网络犯罪分子买卖被盗数据的最大中心之一"
+      ],
+      "used_fallback": false,
+      "matched_focus_keywords": []
     },
     {
       "source": "Dark Reading",
