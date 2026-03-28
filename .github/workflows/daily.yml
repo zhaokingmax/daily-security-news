@@ -34,6 +34,7 @@ jobs:
 
       - name: Run collector
         env:
+          PYTHONUNBUFFERED: "1"
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL || 'https://api.openai.com/v1' }}
           LLM_MODEL: ${{ secrets.LLM_MODEL || 'gpt-4o-mini' }}
@@ -45,7 +46,7 @@ jobs:
           MAX_LLM_INPUT_CHARS_PER_ARTICLE: "1800"
           ENABLE_CONTENT_FETCH: "true"
           ALLOW_FALLBACK_SUMMARY: "true"
-        run: python -m src.main
+        run: python -u -m src.main
 
       - name: Commit generated files
         run: |

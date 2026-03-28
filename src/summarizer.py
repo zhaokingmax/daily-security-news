@@ -125,6 +125,7 @@ def _summarize_batch_with_llm(
         for index, article in enumerate(articles, start=1)
     }
 
+    print(f"[llm] Sending batch request for {len(articles)} articles.")
     response = _chat_complete(
         client,
         settings,
@@ -150,6 +151,7 @@ def _summarize_batch_with_llm(
         ],
         temperature=0.2,
     )
+    print(f"[llm] Batch response received for {len(articles)} articles.")
     payload = _parse_json_payload(response.choices[0].message.content or "")
     raw_items = payload.get("items")
     if not isinstance(raw_items, list):
@@ -174,6 +176,7 @@ def _summarize_batch_with_llm(
 
 def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
     client = _get_client(settings.llm_api_key or "", settings.llm_base_url)
+    print(f"[llm] Sending single-article retry for: {article.title}")
     response = _chat_complete(
         client,
         settings,
@@ -198,6 +201,7 @@ def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
         ],
         temperature=0.2,
     )
+    print(f"[llm] Single-article response received for: {article.title}")
     payload = _parse_json_payload(response.choices[0].message.content or "")
     normalized_payload = _normalize_payload(payload)
     normalized_payload = _ensure_chinese_payload(client, settings, normalized_payload)
@@ -379,6 +383,7 @@ def _ensure_chinese_payload(
     if _payload_is_mostly_chinese(payload):
         return payload
 
+    print("[llm] Rewriting payload to Simplified Chinese.")
     rewrite_response = _chat_complete(
         client,
         settings,
@@ -402,6 +407,7 @@ def _ensure_chinese_payload(
         ],
         temperature=0.1,
     )
+    print("[llm] Chinese rewrite response received.")
     rewrite_message = rewrite_response.choices[0].message.content or ""
     rewritten_payload = _normalize_payload(_parse_json_payload(rewrite_message))
     if _payload_is_mostly_chinese(rewritten_payload):
@@ -473,6 +479,7 @@ def _chat_complete(
 
     for attempt in range(1, attempts + 1):
         try:
+            print(f"[llm] Request attempt {attempt}/{attempts}")
             return client.chat.completions.create(
                 model=settings.llm_model,
                 temperature=temperature,
@@ -481,6 +488,7 @@ def _chat_complete(
             )
         except Exception as exc:
             last_error = exc
+            print(f"[llm] Request attempt {attempt} failed: {exc}")
             if attempt >= attempts:
                 break
             time.sleep(min(2 * attempt, 6))

@@ -113,8 +113,13 @@ def fetch_new_articles(
 ) -> list[Article]:
     all_candidates: list[ArticleCandidate] = []
     queued_candidate_urls: set[str] = set()
+    source_list = list(sources)
 
-    for source in sources:
+    for source_index, source in enumerate(source_list, start=1):
+        print(
+            f"[collect] Source {source_index}/{len(source_list)}: "
+            f"{source['name']} ({source.get('kind', 'rss')})"
+        )
         try:
             candidates = _load_source_candidates(source, settings, seen_urls, queued_candidate_urls)
         except requests.RequestException as exc:
@@ -125,11 +130,17 @@ def fetch_new_articles(
             continue
 
         scan_limit = max(settings.max_articles_per_feed * SOURCE_SCAN_MULTIPLIER, 6)
+        added_from_source = 0
         for candidate in candidates[:scan_limit]:
             if candidate.canonical_link in queued_candidate_urls:
                 continue
             queued_candidate_urls.add(candidate.canonical_link)
             all_candidates.append(candidate)
+            added_from_source += 1
+        print(
+            f"[collect] Source {source['name']} kept {added_from_source} "
+            f"candidates, cumulative {len(all_candidates)}."
+        )
 
     ranked_candidates = sorted(
         all_candidates,
@@ -216,6 +227,7 @@ def _download_rss_candidates(
     source: dict[str, object],
     settings: Settings,
 ) -> list[ArticleCandidate]:
+    print(f"[feed] Requesting RSS: {source['name']}")
     response = requests.get(
         str(source["url"]),
         headers=_build_headers(settings),
@@ -223,6 +235,7 @@ def _download_rss_candidates(
     )
     response.raise_for_status()
     parsed_feed = feedparser.parse(_response_bytes(response))
+    print(f"[feed] RSS loaded for {source['name']}: {len(parsed_feed.entries)} entries")
 
     candidates: list[ArticleCandidate] = []
     for entry in parsed_feed.entries:
@@ -256,6 +269,7 @@ def _download_html_candidates(
     settings: Settings,
 ) -> list[ArticleCandidate]:
     source_url = str(source["url"])
+    print(f"[feed] Requesting HTML source: {source['name']}")
     response = requests.get(
         source_url,
         headers=_build_headers(settings),
@@ -299,6 +313,7 @@ def _download_html_candidates(
             )
         )
 
+    print(f"[feed] HTML source loaded for {source['name']}: {len(candidates)} candidate links")
     return candidates
 
 
@@ -377,6 +392,11 @@ def _materialize_candidates_concurrently(
 
     results: list[Article | None] = [None] * len(candidates)
     max_workers = min(MAX_FETCH_WORKERS, len(candidates))
+    completed = 0
+    print(
+        f"[fetch] Starting content fetch for {len(candidates)} candidates "
+        f"with {max_workers} workers."
+    )
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_map = {
@@ -390,6 +410,9 @@ def _materialize_candidates_concurrently(
             except Exception as exc:
                 print(f"Failed to fetch article content: {candidates[index].link} | {exc}")
                 results[index] = None
+            completed += 1
+            if completed == len(candidates) or completed % 4 == 0:
+                print(f"[fetch] Content progress: {completed}/{len(candidates)}")
 
     return results
 
