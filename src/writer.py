@@ -3,6 +3,7 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
+from .categorizer import format_category_label
 from .models import ArticleSummary
 from .storage import read_json_file, write_json_file
 
@@ -52,7 +53,10 @@ def _merge_items(existing_items: list[dict], new_items: list[dict]) -> list[dict
 
     return sorted(
         merged.values(),
-        key=lambda item: (item.get("published_at", ""), item.get("title", "")),
+        key=lambda item: (
+            item.get("published_at", ""),
+            item.get("title_zh") or item.get("title", ""),
+        ),
         reverse=True,
     )
 
@@ -82,8 +86,8 @@ def _build_markdown_report(
     for index, item in enumerate(items, start=1):
         lines.extend(
             [
-                f"## {index}. {item['title']}",
-                f"- 分类: {item.get('category') or '综合资讯'}",
+                f"## {index}. {_display_title(item)}",
+                f"- 分类: {format_category_label(item.get('category') or '综合资讯')}",
                 f"- 来源: {item['source']}",
                 f"- 发布时间: {item.get('published_at') or 'Unknown'}",
                 f"- 风险等级: {item['risk_level']}",
@@ -92,6 +96,7 @@ def _build_markdown_report(
                 f"- 原文链接: {item['link']}",
                 f"- 摘要来源: {'回退逻辑' if item.get('used_fallback') else '大模型'}",
                 "",
+                *(_original_title_lines(item)),
                 "### 摘要",
                 item["summary"],
                 "",
@@ -109,7 +114,7 @@ def _build_category_index(items: list[dict]) -> list[str]:
     grouped: dict[str, list[str]] = {}
     for item in items:
         category = item.get("category") or "综合资讯"
-        grouped.setdefault(category, []).append(item["title"])
+        grouped.setdefault(category, []).append(item)
 
     ordered_categories = sorted(
         grouped.items(),
@@ -117,13 +122,33 @@ def _build_category_index(items: list[dict]) -> list[str]:
     )
 
     lines: list[str] = []
-    for category, titles in ordered_categories:
-        lines.append(f"### {category}（{len(titles)}）")
-        for title in titles:
-            lines.append(f"- {title}")
+    for category, category_items in ordered_categories:
+        lines.append(f"### {format_category_label(category)}（{len(category_items)}）")
+        for item in category_items:
+            lines.append(f"- {_bilingual_title(item)}")
         lines.append("")
 
     if not lines:
         lines.append("- 暂无分类结果")
 
     return lines
+
+
+def _display_title(item: dict) -> str:
+    return (item.get("title_zh") or item.get("title") or "").strip()
+
+
+def _bilingual_title(item: dict) -> str:
+    display_title = _display_title(item)
+    original_title = str(item.get("title") or "").strip()
+    if not original_title or display_title == original_title:
+        return display_title
+    return f"{display_title} / {original_title}"
+
+
+def _original_title_lines(item: dict) -> list[str]:
+    display_title = _display_title(item)
+    original_title = str(item.get("title") or "").strip()
+    if not original_title or display_title == original_title:
+        return []
+    return [f"- 原标题: {original_title}", ""]

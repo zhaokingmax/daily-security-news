@@ -20,6 +20,7 @@ class Article:
 class ArticleSummary:
     source: str
     title: str
+    title_zh: str
     link: str
     canonical_link: str
     published_at: str

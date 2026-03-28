@@ -41,7 +41,7 @@ def summarize_articles(
         return []
 
     if not settings.llm_enabled:
-        return [_build_fallback_summary(article) for article in articles]
+        return [_build_fallback_summary(article, settings) for article in articles]
 
     summaries: list[ArticleSummary] = []
     batch_size = max(1, settings.llm_batch_size)
@@ -107,7 +107,7 @@ def _summarize_single_with_resilience(
 
     if not settings.allow_fallback_summary:
         raise RuntimeError("LLM credentials are missing and fallback summary is disabled.")
-    return _build_fallback_summary(article)
+    return _build_fallback_summary(article, settings)
 
 
 @lru_cache(maxsize=1)
@@ -135,11 +135,12 @@ def _summarize_batch_with_llm(
                 "content": (
                     "You are a cybersecurity analyst. "
                     "Return one JSON object only. "
-                    'Schema: {"items": [{"id": string, "summary": string, '
+                    'Schema: {"items": [{"id": string, "title_zh": string, "summary": string, '
                     '"risk_level": "高|中|低", "keywords": string[], '
                     '"important_points": string[]}]}. '
                     "Use Simplified Chinese for all explanatory text. "
                     "If the source article is in English, translate key facts first and then summarize in Chinese. "
+                    "Always produce a concise Chinese headline in title_zh. "
                     "Return exactly one item for each input article id. "
                     "Do not wrap JSON in markdown."
                 ),
@@ -186,10 +187,11 @@ def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
                 "content": (
                     "You are a cybersecurity analyst. "
                     "Return one JSON object only. "
-                    'Schema: {"summary": string, "risk_level": "高|中|低", '
+                    'Schema: {"title_zh": string, "summary": string, "risk_level": "高|中|低", '
                     '"keywords": string[], "important_points": string[]}. '
                     "Use Simplified Chinese for all explanatory text. "
                     "If the source article is in English, translate the key facts first and then summarize in Chinese. "
+                    "Always produce a concise Chinese headline in title_zh. "
                     "Keep vendor, product, malware, and standard names only when necessary. "
                     "Do not wrap JSON in markdown."
                 ),
@@ -229,11 +231,12 @@ def _build_batch_prompt(
         "请批量处理下面这些网络安全资讯，输出严格 JSON，不要输出其他说明。\n\n"
         "要求：\n"
         "1. items 中每个对象必须对应一个输入 id，不能遗漏。\n"
-        "2. summary 为 2-4 句中文摘要，优先保留事件、影响、建议。\n"
-        "3. 如果原文是英文，先翻译关键信息，再输出简体中文。\n"
-        "4. keywords 输出 3-5 个关键词，尽量中文化。\n"
-        "5. important_points 输出 2-3 条中文要点。\n"
-        "6. 不要编造信息，不确定就写信息有限。\n\n"
+        "2. title_zh 必须是简洁自然的中文标题。\n"
+        "3. summary 为 2-4 句中文摘要，优先保留事件、影响、建议。\n"
+        "4. 如果原文是英文，先翻译关键信息，再输出简体中文。\n"
+        "5. keywords 输出 3-5 个关键词，尽量中文化。\n"
+        "6. important_points 输出 2-3 条中文要点。\n"
+        "7. 不要编造信息，不确定就写信息有限。\n\n"
         f"{json.dumps(items, ensure_ascii=False)}"
     )
 
@@ -243,13 +246,14 @@ def _build_single_prompt(article: Article, settings: Settings) -> str:
 请为下面这篇网络安全资讯生成中文摘要，输出严格 JSON，不要输出其他说明。
 
 要求：
-1. summary 为 3-5 句中文摘要，突出事件、影响和处置建议。
-2. risk_level 只能是 高 / 中 / 低。
-3. 如果原文是英文，先理解并翻译关键信息，再输出中文摘要。
-4. keywords 输出 3-5 个关键词，尽量使用中文；厂商、产品、组织名称可以保留英文。
-5. important_points 输出 2-4 条要点，每条一句话，尽量使用中文。
-6. 如出现英文句子或英文要点，需要先转成简体中文再输出。
-7. 不要编造文章中没有出现的事实；信息不足时明确说明信息有限。
+1. title_zh 必须是简洁自然的中文标题。
+2. summary 为 3-5 句中文摘要，突出事件、影响和处置建议。
+3. risk_level 只能是 高 / 中 / 低。
+4. 如果原文是英文，先理解并翻译关键信息，再输出中文摘要。
+5. keywords 输出 3-5 个关键词，尽量使用中文；厂商、产品、组织名称可以保留英文。
+6. important_points 输出 2-4 条要点，每条一句话，尽量使用中文。
+7. 如出现英文句子或英文要点，需要先转成简体中文再输出。
+8. 不要编造文章中没有出现的事实；信息不足时明确说明信息有限。
 
 文章元数据：
 标题: {article.title}
@@ -287,6 +291,7 @@ def _parse_json_payload(raw_text: str) -> dict:
 
 def _normalize_payload(payload: dict) -> dict:
     return {
+        "title_zh": _normalize_title_zh(payload.get("title_zh")),
         "summary": _normalize_summary(payload.get("summary")),
         "risk_level": _normalize_risk_level(payload.get("risk_level")),
         "keywords": _normalize_keywords(payload.get("keywords")),
@@ -311,6 +316,10 @@ def _normalize_keywords(value: object) -> list[str]:
         if keyword and keyword not in keywords:
             keywords.append(keyword)
     return keywords[:5]
+
+
+def _normalize_title_zh(value: object) -> str:
+    return str(value or "").strip()
 
 
 def _normalize_summary(value: object) -> str:
@@ -340,6 +349,10 @@ def _build_article_summary(
     summary = ArticleSummary(
         source=article.source,
         title=article.title,
+        title_zh=_prefer_chinese_title(
+            _normalize_title_zh(payload.get("title_zh")),
+            article.title,
+        ),
         link=article.link,
         canonical_link=article.canonical_link,
         published_at=article.published_at,
@@ -355,7 +368,7 @@ def _build_article_summary(
     return summary
 
 
-def _build_fallback_summary(article: Article) -> ArticleSummary:
+def _build_fallback_summary(article: Article, settings: Settings) -> ArticleSummary:
     text = article.content or article.summary_hint or article.title
     points = _extract_points(text)
     summary = (
@@ -366,6 +379,7 @@ def _build_fallback_summary(article: Article) -> ArticleSummary:
     return _build_article_summary(
         article,
         {
+            "title_zh": _fallback_title_zh(article, settings),
             "risk_level": _infer_risk_level(text),
             "keywords": _guess_keywords(article),
             "summary": summary,
@@ -399,6 +413,7 @@ def _ensure_chinese_payload(
                 "role": "user",
                 "content": (
                     "把下面 JSON 中所有说明性文本改写为简体中文。"
+                    "title_zh 也必须是中文标题。"
                     "厂商、产品、组织、恶意软件名称可以保留英文。"
                     "keywords 和 important_points 也要尽量中文化。\n\n"
                     f"{json.dumps(payload, ensure_ascii=False)}"
@@ -417,6 +432,7 @@ def _ensure_chinese_payload(
 
 def _payload_is_mostly_chinese(payload: dict) -> bool:
     parts = [
+        str(payload.get("title_zh") or ""),
         str(payload.get("summary") or ""),
         *[str(item) for item in payload.get("important_points") or []],
         *[str(item) for item in payload.get("keywords") or []],
@@ -455,6 +471,64 @@ def _guess_keywords(article: Article) -> list[str]:
     if article.source not in keywords:
         keywords.append(article.source)
     return keywords[:5]
+
+
+def _prefer_chinese_title(title_zh: str, original_title: str) -> str:
+    if _looks_mostly_chinese(title_zh):
+        return title_zh
+    if _looks_mostly_chinese(original_title):
+        return original_title.strip()
+    return title_zh or original_title
+
+
+def _looks_mostly_chinese(text: str) -> bool:
+    candidate = str(text or "").strip()
+    if not candidate:
+        return False
+    chinese_chars = len(re.findall(r"[\u4e00-\u9fff]", candidate))
+    english_chars = len(re.findall(r"[A-Za-z]", candidate))
+    return chinese_chars > 0 and chinese_chars >= max(2, english_chars // 2)
+
+
+def _fallback_title_zh(article: Article, settings: Settings) -> str:
+    if _looks_mostly_chinese(article.title):
+        return article.title
+    if not settings.llm_enabled:
+        return article.title
+
+    try:
+        client = _get_client(settings.llm_api_key or "", settings.llm_base_url)
+        print(f"[llm] Translating fallback title: {article.title}")
+        response = _chat_complete(
+            client,
+            settings,
+            [
+                {
+                    "role": "system",
+                    "content": (
+                        "You translate cybersecurity headlines into concise Simplified Chinese. "
+                        'Return one JSON object only with schema: {"title_zh": string}.'
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "把这个网络安全文章标题翻译成简洁自然的简体中文。"
+                        "厂商、产品、组织、恶意软件名称可以保留英文。\n\n"
+                        f"{article.title}"
+                    ),
+                },
+            ],
+            temperature=0.1,
+        )
+        payload = _parse_json_payload(response.choices[0].message.content or "")
+        translated_title = _normalize_title_zh(payload.get("title_zh"))
+        if translated_title:
+            return translated_title
+    except Exception as exc:
+        print(f"[llm] Fallback title translation failed: {article.title} | {exc}")
+
+    return article.title
 
 
 def _chunked(items: list[Article], size: int) -> list[list[Article]]:

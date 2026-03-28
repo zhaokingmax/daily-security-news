@@ -204,6 +204,26 @@ CATEGORY_RULES: list[tuple[str, list[str]]] = [
         ],
     ),
 ]
+
+CATEGORY_LABELS_EN = {
+    "AI安全与安全智能体": "AI Security & Security Agents",
+    "身份与访问控制": "Identity & Access Management",
+    "终端安全与EDR/XDR": "Endpoint Security & EDR/XDR",
+    "APT与国家级威胁": "APT & Nation-State Threats",
+    "运营商与关键基础设施": "Telecom & Critical Infrastructure",
+    "漏洞与补丁": "Vulnerabilities & Patching",
+    "恶意软件与勒索软件": "Malware & Ransomware",
+    "钓鱼与社工诈骗": "Phishing & Social Engineering",
+    "数据泄露与隐私": "Data Breaches & Privacy",
+    "云安全与容器": "Cloud Security & Containers",
+    "网络与边界安全": "Network & Perimeter Security",
+    "应用安全与供应链": "AppSec & Supply Chain",
+    "威胁情报与研判": "Threat Intelligence & Analysis",
+    "安全运营与SOC": "Security Operations & SOC",
+    "工控与物联网安全": "OT & IoT Security",
+    "政策合规与治理": "Policy, Compliance & Governance",
+    "综合资讯": "General Security News",
+}
 DEFAULT_CATEGORY = "综合资讯"
 
 
@@ -211,6 +231,7 @@ def categorize_summary(summary: ArticleSummary) -> str:
     normalized_summary = summary.summary.replace("未调用大模型，以下为原文关键信息摘录：", "")
     search_text = "\n".join(
         [
+            summary.title_zh or summary.title,
             summary.title,
             summary.source,
             normalized_summary,
@@ -224,6 +245,13 @@ def categorize_summary(summary: ArticleSummary) -> str:
         if any(_contains_keyword(search_text, keyword) for keyword in keywords):
             return category
     return DEFAULT_CATEGORY
+
+
+def format_category_label(category: str) -> str:
+    english = CATEGORY_LABELS_EN.get(category, "")
+    if not english:
+        return category
+    return f"{category} / {english}"
 
 
 def _contains_keyword(text: str, keyword: str) -> bool:
