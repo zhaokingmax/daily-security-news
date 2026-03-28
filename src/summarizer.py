@@ -45,8 +45,13 @@ def summarize_articles(
 
     summaries: list[ArticleSummary] = []
     batch_size = max(1, settings.llm_batch_size)
+    total_batches = (len(articles) + batch_size - 1) // batch_size
 
-    for batch in _chunked(articles, batch_size):
+    for batch_index, batch in enumerate(_chunked(articles, batch_size), start=1):
+        print(
+            f"Running LLM batch {batch_index}/{total_batches} "
+            f"for {len(batch)} articles..."
+        )
         summaries.extend(_summarize_batch_with_resilience(batch, settings))
 
     return summaries
@@ -76,6 +81,12 @@ def _summarize_batch_with_resilience(
         if summary is None:
             summary = _summarize_single_with_resilience(article, settings)
         summaries.append(summary)
+
+    batch_llm_count = sum(1 for summary in summaries if not summary.used_fallback)
+    print(
+        f"Completed batch: {batch_llm_count}/{len(summaries)} via LLM, "
+        f"{len(summaries) - batch_llm_count} via fallback."
+    )
 
     return summaries
 

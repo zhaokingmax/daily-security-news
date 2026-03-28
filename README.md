@@ -113,15 +113,21 @@ python -m src.main
 - `TZ_NAME`，默认 `Asia/Shanghai`
 - `MAX_ARTICLES_PER_RUN`，默认 `50`
 - `MAX_ARTICLES_PER_FEED`，默认 `8`
-- `LLM_BATCH_SIZE`，默认 `5`；批量送给大模型，减少重复提示词的 token 开销
+- `LLM_BATCH_SIZE`，默认 `8`；批量送给大模型，减少重复提示词的 token 开销
 - `LLM_RETRY_COUNT`，默认 `2`；模型调用失败时自动重试
-- `MAX_LLM_INPUT_CHARS_PER_ARTICLE`，默认 `2500`；每篇送入模型的正文截断长度
+- `MAX_LLM_INPUT_CHARS_PER_ARTICLE`，默认 `1800`；每篇送入模型的正文截断长度
 - `ENABLE_CONTENT_FETCH`，默认 `true`
 - `ALLOW_FALLBACK_SUMMARY`，默认 `true`；没有配置模型或模型调用失败时会回退
 - `FOCUS_KEYWORDS`，可选，逗号分隔；默认内置关注词，支持中英文匹配与优先排序
 - `BLACKLIST_KEYWORDS`，可选，逗号分隔；仅基于标题和摘要命中后自动忽略
 - `OUTPUT_DIR`，可选，自定义报告输出目录
 - `STATE_FILE`，可选，自定义去重状态文件路径
+
+## 性能说明
+
+- 先收集和排序候选链接，再只对高优先级候选抓取正文，避免为大量未入选文章浪费抓取时间。
+- 正文抓取会并发执行，减少 GitHub Actions 总耗时。
+- 大模型默认按批次处理多篇文章，并缩短单篇输入长度，降低 token 消耗并减少超时风险。
 
 ## 输出文件说明
 

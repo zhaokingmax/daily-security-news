@@ -137,9 +137,9 @@ def load_settings(base_dir: Path | None = None) -> Settings:
         timezone_name=os.getenv("TZ_NAME", "Asia/Shanghai"),
         max_articles_per_feed=_read_int("MAX_ARTICLES_PER_FEED", 8),
         max_articles_per_run=_read_int("MAX_ARTICLES_PER_RUN", 50),
-        llm_batch_size=_read_int("LLM_BATCH_SIZE", 5),
+        llm_batch_size=_read_int("LLM_BATCH_SIZE", 8),
         llm_retry_count=_read_int("LLM_RETRY_COUNT", 2),
-        max_llm_input_chars_per_article=_read_int("MAX_LLM_INPUT_CHARS_PER_ARTICLE", 2500),
+        max_llm_input_chars_per_article=_read_int("MAX_LLM_INPUT_CHARS_PER_ARTICLE", 1800),
         request_timeout_seconds=_read_int("REQUEST_TIMEOUT_SECONDS", 20),
         user_agent=os.getenv(
             "REQUEST_USER_AGENT",

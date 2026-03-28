@@ -3,6 +3,7 @@ from __future__ import annotations
 import calendar
 import html
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Iterable
@@ -55,6 +56,7 @@ GENERIC_TITLES = {
     "首页",
 }
 SOURCE_SCAN_MULTIPLIER = 6
+MAX_FETCH_WORKERS = 8
 
 
 @dataclass(slots=True)
@@ -109,12 +111,12 @@ def fetch_new_articles(
     settings: Settings,
     seen_urls: set[str],
 ) -> list[Article]:
-    articles: list[Article] = []
-    queued_urls: set[str] = set()
+    all_candidates: list[ArticleCandidate] = []
+    queued_candidate_urls: set[str] = set()
 
     for source in sources:
         try:
-            candidates = _load_source_candidates(source, settings, seen_urls, queued_urls)
+            candidates = _load_source_candidates(source, settings, seen_urls, queued_candidate_urls)
         except requests.RequestException as exc:
             print(f"Failed to load source: {source['name']} | {exc}")
             continue
@@ -122,34 +124,15 @@ def fetch_new_articles(
             print(f"Failed to parse source: {source['name']} | {exc}")
             continue
 
-        accepted_from_source = 0
         scan_limit = max(settings.max_articles_per_feed * SOURCE_SCAN_MULTIPLIER, 6)
-
         for candidate in candidates[:scan_limit]:
-            if accepted_from_source >= settings.max_articles_per_feed:
-                break
-
-            article = _materialize_article(candidate, settings)
-            if article is None:
+            if candidate.canonical_link in queued_candidate_urls:
                 continue
+            queued_candidate_urls.add(candidate.canonical_link)
+            all_candidates.append(candidate)
 
-            article_blacklist_hits = _find_blacklist_hits(article.title, article.summary_hint, settings.blacklist_keywords)
-            if article_blacklist_hits:
-                print(
-                    f"Skipped blacklisted article: {article.title} | "
-                    f"matched: {', '.join(article_blacklist_hits)}"
-                )
-                continue
-
-            if article.canonical_link in seen_urls or article.canonical_link in queued_urls:
-                continue
-
-            articles.append(article)
-            queued_urls.add(article.canonical_link)
-            accepted_from_source += 1
-
-    ranked_articles = sorted(
-        articles,
+    ranked_candidates = sorted(
+        all_candidates,
         key=lambda item: (
             len(item.matched_focus_keywords),
             item.published_at,
@@ -157,7 +140,36 @@ def fetch_new_articles(
         ),
         reverse=True,
     )
-    return ranked_articles[: settings.max_articles_per_run]
+    print(f"Collected {len(ranked_candidates)} candidate links before article fetch.")
+
+    materialized_articles = _materialize_ranked_candidates(ranked_candidates, settings)
+    articles: list[Article] = []
+    queued_article_urls: set[str] = set()
+
+    for article in materialized_articles:
+        if article is None:
+            continue
+        if article.canonical_link in seen_urls or article.canonical_link in queued_article_urls:
+            continue
+
+        article_blacklist_hits = _find_blacklist_hits(
+            article.title,
+            article.summary_hint,
+            settings.blacklist_keywords,
+        )
+        if article_blacklist_hits:
+            print(
+                f"Skipped blacklisted article: {article.title} | "
+                f"matched: {', '.join(article_blacklist_hits)}"
+            )
+            continue
+
+        articles.append(article)
+        queued_article_urls.add(article.canonical_link)
+        if len(articles) >= settings.max_articles_per_run:
+            break
+
+    return articles
 
 
 def _load_source_candidates(
@@ -329,6 +341,59 @@ def _materialize_article(
     )
 
 
+def _materialize_ranked_candidates(
+    candidates: list[ArticleCandidate],
+    settings: Settings,
+) -> list[Article | None]:
+    if not candidates:
+        return []
+
+    materialized: list[Article | None] = []
+    cursor = 0
+    window_size = max(
+        12,
+        settings.max_articles_per_feed * 3,
+        settings.max_articles_per_run // 2,
+    )
+
+    while cursor < len(candidates) and len([item for item in materialized if item is not None]) < settings.max_articles_per_run:
+        window = candidates[cursor : cursor + window_size]
+        print(
+            f"Fetching article content for candidates "
+            f"{cursor + 1}-{cursor + len(window)} / {len(candidates)}..."
+        )
+        materialized.extend(_materialize_candidates_concurrently(window, settings))
+        cursor += window_size
+
+    return materialized
+
+
+def _materialize_candidates_concurrently(
+    candidates: list[ArticleCandidate],
+    settings: Settings,
+) -> list[Article | None]:
+    if not candidates:
+        return []
+
+    results: list[Article | None] = [None] * len(candidates)
+    max_workers = min(MAX_FETCH_WORKERS, len(candidates))
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_map = {
+            executor.submit(_materialize_article, candidate, settings): index
+            for index, candidate in enumerate(candidates)
+        }
+        for future in as_completed(future_map):
+            index = future_map[future]
+            try:
+                results[index] = future.result()
+            except Exception as exc:
+                print(f"Failed to fetch article content: {candidates[index].link} | {exc}")
+                results[index] = None
+
+    return results
+
+
 def _extract_article_payload(link: str, settings: Settings) -> dict[str, str]:
     try:
         response = requests.get(
@@ -453,16 +518,6 @@ def _choose_title(candidate_title: str, extracted_title: str, source_name: str) 
 
 def _candidate_search_text(candidate: ArticleCandidate) -> str:
     return "\n".join([candidate.title, candidate.summary_hint])
-
-
-def _article_search_text(article: Article) -> str:
-    return "\n".join(
-        [
-            article.title,
-            article.summary_hint,
-            article.content,
-        ]
-    )
 
 
 def _find_blacklist_hits(
