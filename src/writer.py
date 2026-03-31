@@ -14,6 +14,7 @@ def write_reports(
     report_title: str,
     output_dir: Path,
     summaries: list[ArticleSummary],
+    settings=None,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     monthly_dir = output_dir / report_date[:7]
@@ -27,6 +28,10 @@ def write_reports(
     existing_payload = read_json_file(report_json_path, default={})
     existing_items = existing_payload.get("items", []) if isinstance(existing_payload, dict) else []
     merged_items = _merge_items(existing_items, [summary.to_dict() for summary in summaries])
+    if settings is not None:
+        from .summarizer import backfill_title_fields
+
+        merged_items = backfill_title_fields(merged_items, settings)
 
     payload = {
         "date": report_date,

@@ -55,6 +55,7 @@ def main() -> int:
         report_title=settings.report_title,
         output_dir=settings.output_dir,
         summaries=summaries,
+        settings=settings,
     )
     print("Saving updated seen URL state...")
     save_seen_urls(settings.state_file, seen_urls | successful_urls)
