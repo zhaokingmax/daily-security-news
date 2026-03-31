@@ -64,6 +64,82 @@ def summarize_article(article: Article, settings: Settings) -> ArticleSummary:
     return summaries[0]
 
 
+def backfill_title_fields(items: list[dict], settings: Settings) -> list[dict]:
+    if not items or not settings.llm_enabled:
+        return items
+
+    pending_items = [
+        (str(index), item)
+        for index, item in enumerate(items, start=1)
+        if _needs_title_backfill(item)
+    ]
+    if not pending_items:
+        return items
+
+    client = _get_client(settings.llm_api_key or "", settings.llm_base_url)
+    print(f"[llm] Backfilling Chinese titles for {len(pending_items)} existing items.")
+
+    for batch in _chunked(pending_items, max(1, settings.llm_batch_size)):
+        payload_items = [
+            {
+                "id": item_id,
+                "title": str(item.get("title") or ""),
+                "summary": str(item.get("summary") or ""),
+                "important_points": item.get("important_points") or [],
+                "source": str(item.get("source") or ""),
+            }
+            for item_id, item in batch
+        ]
+        response = _chat_complete(
+            client,
+            settings,
+            [
+                {
+                    "role": "system",
+                    "content": (
+                        "You translate cybersecurity headlines into concise Simplified Chinese. "
+                        'Return one JSON object only with schema: {"items": [{"id": string, "title_zh": string}]}.'
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "请根据下面每条资讯的原标题、摘要和要点，为每条生成简洁自然的中文标题。"
+                        "必须返回每个 id 对应的 title_zh。"
+                        "厂商、产品、组织、恶意软件名称可以保留英文。\n\n"
+                        f"{json.dumps(payload_items, ensure_ascii=False)}"
+                    ),
+                },
+            ],
+            temperature=0.1,
+        )
+        batch_payload = _parse_json_payload(response.choices[0].message.content or "")
+        raw_items = batch_payload.get("items")
+        if not isinstance(raw_items, list):
+            continue
+
+        translated_map: dict[str, str] = {}
+        for raw_item in raw_items:
+            if not isinstance(raw_item, dict):
+                continue
+            item_id = str(raw_item.get("id") or "").strip()
+            title_zh = _prefer_chinese_title(
+                _normalize_title_zh(raw_item.get("title_zh")),
+                "",
+            )
+            if item_id and title_zh:
+                translated_map[item_id] = title_zh
+
+        for item_id, item in batch:
+            translated_title = translated_map.get(item_id)
+            if translated_title:
+                item["title_zh"] = translated_title
+            elif not item.get("title_zh"):
+                item["title_zh"] = _fallback_title_from_existing_item(item)
+
+    return items
+
+
 def _summarize_batch_with_resilience(
     articles: list[Article],
     settings: Settings,
@@ -151,6 +227,7 @@ def _summarize_batch_with_llm(
             },
         ],
         temperature=0.2,
+        is_batch=True,
     )
     print(f"[llm] Batch response received for {len(articles)} articles.")
     payload = _parse_json_payload(response.choices[0].message.content or "")
@@ -202,6 +279,7 @@ def _summarize_with_llm(article: Article, settings: Settings) -> ArticleSummary:
             },
         ],
         temperature=0.2,
+        is_batch=False,
     )
     print(f"[llm] Single-article response received for: {article.title}")
     payload = _parse_json_payload(response.choices[0].message.content or "")
@@ -531,6 +609,41 @@ def _fallback_title_zh(article: Article, settings: Settings) -> str:
     return article.title
 
 
+def _needs_title_backfill(item: dict) -> bool:
+    current_title_zh = str(item.get("title_zh") or "").strip()
+    if _looks_mostly_chinese(current_title_zh):
+        return False
+
+    original_title = str(item.get("title") or "").strip()
+    return bool(original_title) and not _looks_mostly_chinese(original_title)
+
+
+def _fallback_title_from_existing_item(item: dict) -> str:
+    title_zh = str(item.get("title_zh") or "").strip()
+    if _looks_mostly_chinese(title_zh):
+        return title_zh
+
+    original_title = str(item.get("title") or "").strip()
+    if _looks_mostly_chinese(original_title):
+        return original_title
+
+    summary = str(item.get("summary") or "").strip()
+    if _looks_mostly_chinese(summary):
+        sentence = re.split(r"[。！？!?；;\n]", summary)[0].strip(" ：:-")
+        if 6 <= len(sentence) <= 28:
+            return sentence
+
+    important_points = item.get("important_points") or []
+    for point in important_points:
+        text = str(point).strip()
+        if _looks_mostly_chinese(text):
+            snippet = re.split(r"[。！？!?；;\n]", text)[0].strip(" ：:-")
+            if 6 <= len(snippet) <= 28:
+                return snippet
+
+    return original_title
+
+
 def _chunked(items: list[Article], size: int) -> list[list[Article]]:
     iterator = iter(items)
     chunks: list[list[Article]] = []
@@ -547,22 +660,59 @@ def _chat_complete(
     settings: Settings,
     messages: list[dict[str, str]],
     temperature: float,
+    is_batch: bool = False,
 ):
+    import random
+    from openai import APITimeoutError, APIConnectionError, RateLimitError, APIStatusError
+
+    # Calculate timeout: batch requests need more time
+    base_timeout = max(60, settings.request_timeout_seconds * 3)
+    if is_batch:
+        timeout = base_timeout * settings.llm_batch_timeout_multiplier
+    else:
+        timeout = base_timeout
+
     attempts = max(1, settings.llm_retry_count + 1)
     last_error: Exception | None = None
 
     for attempt in range(1, attempts + 1):
         try:
-            print(f"[llm] Request attempt {attempt}/{attempts}")
+            print(f"[llm] Request attempt {attempt}/{attempts} (timeout={timeout:.0f}s)")
             return client.chat.completions.create(
                 model=settings.llm_model,
                 temperature=temperature,
                 messages=messages,
-                timeout=max(60, settings.request_timeout_seconds * 3),
+                timeout=timeout,
             )
+        except (APITimeoutError, APIConnectionError) as exc:
+            last_error = exc
+            print(f"[llm] Request attempt {attempt} failed (timeout/connection): {exc}")
+            if attempt >= attempts:
+                break
+            # Exponential backoff with jitter for timeout/connection errors
+            delay = (2 ** attempt) + random.uniform(0, 1)
+            time.sleep(delay)
+        except RateLimitError as exc:
+            last_error = exc
+            print(f"[llm] Request attempt {attempt} failed (rate limit): {exc}")
+            if attempt >= attempts:
+                break
+            # Longer backoff for rate limits
+            time.sleep(5 * attempt)
+        except APIStatusError as exc:
+            last_error = exc
+            if exc.status_code >= 500:
+                print(f"[llm] Request attempt {attempt} failed (server error {exc.status_code}): {exc}")
+                if attempt >= attempts:
+                    break
+                time.sleep(min(2 * attempt, 6))
+            else:
+                # 4xx errors should not retry
+                print(f"[llm] Request attempt {attempt} failed (client error {exc.status_code}): {exc}")
+                break
         except Exception as exc:
             last_error = exc
-            print(f"[llm] Request attempt {attempt} failed: {exc}")
+            print(f"[llm] Request attempt {attempt} failed (unknown): {exc}")
             if attempt >= attempts:
                 break
             time.sleep(min(2 * attempt, 6))

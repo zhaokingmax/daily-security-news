@@ -62,6 +62,13 @@ def _read_int(name: str, default: int) -> int:
     return int(raw_value.strip())
 
 
+def _read_float(name: str, default: float) -> float:
+    raw_value = os.getenv(name)
+    if raw_value is None:
+        return default
+    return float(raw_value.strip())
+
+
 def _resolve_path(base_dir: Path, env_name: str, default: Path) -> Path:
     raw_value = os.getenv(env_name)
     if not raw_value:
@@ -98,6 +105,7 @@ class Settings:
     llm_retry_count: int
     max_llm_input_chars_per_article: int
     request_timeout_seconds: int
+    llm_batch_timeout_multiplier: float
     user_agent: str
     enable_content_fetch: bool
     allow_fallback_summary: bool
@@ -140,7 +148,8 @@ def load_settings(base_dir: Path | None = None) -> Settings:
         llm_batch_size=_read_int("LLM_BATCH_SIZE", 8),
         llm_retry_count=_read_int("LLM_RETRY_COUNT", 2),
         max_llm_input_chars_per_article=_read_int("MAX_LLM_INPUT_CHARS_PER_ARTICLE", 1800),
-        request_timeout_seconds=_read_int("REQUEST_TIMEOUT_SECONDS", 20),
+        request_timeout_seconds=_read_int("REQUEST_TIMEOUT_SECONDS", 30),
+        llm_batch_timeout_multiplier=_read_float("LLM_BATCH_TIMEOUT_MULTIPLIER", 2.5),
         user_agent=os.getenv(
             "REQUEST_USER_AGENT",
             "DailySecurityNewsBot/1.0 (+https://github.com/<your-github-username>/daily-security-news)",
